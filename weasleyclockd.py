@@ -15,25 +15,22 @@ debug_p = True
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
-    userdata.logger.INFO("Connected with result code "+str(rc))
-
-    # Subscribing in on_connect() means that if we lose the connection and
-    # reconnect then subscriptions will be renewed.
     client.subscribe(userdata['topic'])
-    userdata.logger.info("subscibing to topic [" + userdata['topic'] + "]")
-    
+    print("subscibing to topic [" + userdata['topic'] + "]")
+    userdata['logger'].info("subscibing to topic [" + userdata['topic'] + "]")
+    userdata['logger'].info("Connected with result code "+str(rc))
+
 
 def on_message(client, userdata, message):
-    userdata.logger.INFO("Received message '" + str(message.payload) +
-                         "' on topic '" + message.topic +
-                         "' with QoS " + str(message.qos))
-    print("Received message '" + str(message.payload) +
+    print("Received message '" + str(message.payload.decode()) +
           "' on topic '" + message.topic +
           "' with QoS " + str(message.qos))
+    userdata['logger'].info("Received message '" + str(message.payload.decode()) +
+                         "' on topic '" + message.topic +
+                         "' with QoS " + str(message.qos))
 
 
 def do_something(logf, configf):
-    # This does the "work" of the daemon
 
     #
     # setup logging
@@ -63,6 +60,8 @@ def do_something(logf, configf):
         print("Weasley Clock: connecting to host " + host + ":" + str(port) +
               " topic " + topic)
 
+    print(logger)
+        
     clockdata = {
         'logger': logger,
         'host': host,
@@ -72,7 +71,7 @@ def do_something(logf, configf):
         }
 
     # how to mqtt in python see https://pypi.org/project/paho-mqtt/
-    mqttc = mqtt.Client(client_id='WeasleyClock',
+    mqttc = mqtt.Client(client_id='weasleyclockd',
                         clean_session=True,
                         userdata=clockdata)
 
