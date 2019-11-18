@@ -7,7 +7,8 @@ import logging
 import daemon
 import json
 import paho.mqtt.client as mqtt
-from daemon import pidfile
+import daemon
+import lockfile
 
 debug_p = True
 
@@ -18,7 +19,7 @@ def on_connect(client, userdata, flags, rc):
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
-    client.subscribe(userdata['topic')
+    client.subscribe(userdata['topic'])
 
 
 def on_message(client, userdata, message):
@@ -98,7 +99,7 @@ def start_daemon(pidf, logf, configf):
     with daemon.DaemonContext(
         working_directory='/var/lib/weasleyclock',
         umask=0o002,
-        pidfile=pidfile.TimeoutPIDLockFile(pidf),
+        pidfile=lockfile.FileLock(pidf),
         ) as context:
         do_something(logf, configf)
 
