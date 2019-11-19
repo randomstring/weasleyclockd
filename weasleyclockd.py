@@ -16,18 +16,18 @@ debug_p = True
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     client.subscribe(userdata['topic'])
-    print("subscibing to topic [" + userdata['topic'] + "]")
     userdata['logger'].info("subscibing to topic [" + userdata['topic'] + "]")
     userdata['logger'].info("Connected with result code "+str(rc))
 
 
 def on_message(client, userdata, message):
-    print("Received message '" + str(message.payload.decode()) +
-          "' on topic '" + message.topic +
-          "' with QoS " + str(message.qos))
+    if debug_p:
+        print("Received message '" + str(message.payload.decode()) +
+              "' on topic '" + message.topic +
+              "' with QoS " + str(message.qos))
     userdata['logger'].info("Received message '" + str(message.payload.decode()) +
-                         "' on topic '" + message.topic +
-                         "' with QoS " + str(message.qos))
+                            "' on topic '" + message.topic +
+                            "' with QoS " + str(message.qos))
 
 
 def do_something(logf, configf):
@@ -53,15 +53,13 @@ def do_something(logf, configf):
     port = config_data['mqtt_port'] if 'mqtt_port' in config_data else 4884
     topic = config_data['mqtt_topic'] if 'mqtt_topic' in config_data else 'weasleyclock/#'
 
-    logger.info("Weasley Clock: connecting to host " + host + ":" + str(port) +
+    logger.info("connecting to host " + host + ":" + str(port) +
                 " topic " + topic)
 
     if debug_p:
-        print("Weasley Clock: connecting to host " + host + ":" + str(port) +
+        print("connecting to host " + host + ":" + str(port) +
               " topic " + topic)
 
-    print(logger)
-        
     clockdata = {
         'logger': logger,
         'host': host,
@@ -85,40 +83,28 @@ def do_something(logf, configf):
     # intitialize clock hands
 
     mqttc.connect(host, port, 60)
-
-    print("after connect")
-
-    # loop
     mqttc.loop_forever()
 
-    print("after loop_forever")
 
-#    while True:
-#        logger.info("this is an INFO message")
-#        time.sleep(5)
-
-
-def start_daemon(pidf, logf, wdir, configf):
-    # This launches the daemon in its context
-
+def start_daemon(pidf, logf, wdir, configf, nodaemon):
     global debug_p
 
-    if debug_p:
-        print("weasleyclock: entered run()")
-        print("weasleyclock: pidf = {}    logf = {}".format(pidf, logf))
-        print("weasleyclock: about to start daemonization")
+    if nodaemon:
+        # non-daemon mode, for debugging.
+        print("Non-Daemon mode.")
+        do_something(logf, configf)
+    else:
+        # daemon mode
+        if debug_p:
+            print("weasleyclock: entered run()")
+            print("weasleyclock: pidf = {}    logf = {}".format(pidf, logf))
+            print("weasleyclock: about to start daemonization")
 
-    # pidfile is a context
-#    with daemon.DaemonContext(
-#            working_directory=wdir,
-#            umask=0o002,
-#            pidfile=lockfile.FileLock(pidf),
-#         ) as context:
-#        print("do something!")
-#        do_something(logf, configf)
+        with daemon.DaemonContext(working_directory=wdir,
+                                  umask=0o002,
+                                  pidfile=lockfile.FileLock(pidf),) as context:
+            do_something(logf, configf)
 
-    print("really do something")
-    do_something(logf, configf)
 
 
 if __name__ == "__main__":
@@ -127,10 +113,12 @@ if __name__ == "__main__":
     parser.add_argument('-l', '--log-file', default='/var/log/weasleyclock.log')
     parser.add_argument('-d', '--working-dir', default='/var/lib/weasleyclock')
     parser.add_argument('-c', '--config-file', default='/etc/weasleyclock.json')
+    parser.add_argument('-n', '--no-daemon', action="store_true")
 
     args = parser.parse_args()
 
     start_daemon(pidf=args.pid_file,
                  logf=args.log_file,
                  wdir=args.working_dir,
-                 configf=args.config_file)
+                 configf=args.config_file,
+                 nodaemon=args.no_daemon)
