@@ -7,7 +7,6 @@ import logging
 import daemon
 import json
 import paho.mqtt.client as mqtt
-import daemon
 import lockfile
 
 debug_p = True
@@ -21,14 +20,31 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_message(client, userdata, message):
+    topic = message.topic
+    m_decode = str(message.payload.decode("utf-8", "ignore"))
     if debug_p:
-        print("Received message '" + str(message.payload.decode()) +
-              "' on topic '" + message.topic +
+        print("Received message '" + m_decode +
+              "' on topic '" + topic +
               "' with QoS " + str(message.qos))
-    userdata['logger'].info("Received message '" + str(message.payload.decode()) +
-                            "' on topic '" + message.topic +
+
+    log_snippet = (m_decode[:10] + '..') if len(m_decode) > 12 else m_decode
+    userdata['logger'].info("Received message '" +
+                            log_snippet +
+                            "' on topic '" + topic +
                             "' with QoS " + str(message.qos))
 
+    print("data Received type", type(m_decode))
+    print("data Received", m_decode)
+    print("Converting from Json to Object")
+    try:
+        m_in = json.loads(m_decode)
+        print(type(m_in))
+        for (k, v) in m_in.items():
+            print(k + " = " + v)
+    except json.JSONDecodeError as parse_error:
+        print("JSON decode failed. [" + parse_error.msg + "]")
+        print("error at pos: " + parse_error.pos +
+              " line: " + parse_error.lineno)
 
 def do_something(logf, configf):
 
