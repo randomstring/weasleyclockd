@@ -8,6 +8,7 @@ import daemon
 import json
 import paho.mqtt.client as mqtt
 import lockfile
+from geopy.distance import great_circle
 
 debug_p = True
 
@@ -28,23 +29,51 @@ def on_message(client, userdata, message):
               "' with QoS " + str(message.qos))
 
     log_snippet = (m_decode[:10] + '..') if len(m_decode) > 12 else m_decode
+    log_snippet = log_snippet.replace('\n', ' ')
+
+    (prefix, name) = topic.split('/',1)
+    
     userdata['logger'].info("Received message '" +
                             log_snippet +
                             "' on topic '" + topic +
                             "' with QoS " + str(message.qos))
 
-    print("data Received type", type(m_decode))
     print("data Received", m_decode)
-    print("Converting from Json to Object")
     try:
-        m_in = json.loads(m_decode)
-        print(type(m_in))
-        for (k, v) in m_in.items():
-            print(k + " = " + v)
+        msg_data = json.loads(m_decode)
+        move_clock_hands(name, msg_data, userdata)
     except json.JSONDecodeError as parse_error:
         print("JSON decode failed. [" + parse_error.msg + "]")
         print("error at pos: " + parse_error.pos +
               " line: " + parse_error.lineno)
+
+
+def move_clock_hands(name, message, userdata):
+    config_data = userdata['config_data']
+    state = None
+    latitude = None
+    longitude = None
+    distance = 0.0
+    if 'state' in message:
+        state = message['state']
+    if 'latitude' in message:
+        latitude = float(message['latitude'])
+    if 'longitude' in message:
+        longitude = float(message['longitude'])
+
+    distance = 0.0
+    if latitude and longitude:
+        latitude_home = float(config_data['latitude'])
+        longitude_home = float(config_data['longitude'])
+        distance = great_circle((latitude_home, longitude_home),
+                                (latitude, longitude)).miles
+
+    print("Move " + name + " hand to " + state +
+          " ({0:.1f} miles away)".format(distance))
+
+    userdata['logger'].info("Move [" + name +
+                            "] hand to [" + state +
+                            "] ({0:.1f} miles away)".format(distance))
 
 def do_something(logf, configf):
 
@@ -72,6 +101,16 @@ def do_something(logf, configf):
     logger.info("connecting to host " + host + ":" + str(port) +
                 " topic " + topic)
 
+    latitude = 47.838232
+    longitude = -122.092915
+    latitude_home = float(config_data['latitude'])
+    longitude_home = float(config_data['longitude'])
+    distance = great_circle((latitude_home, longitude_home),
+                            (latitude, longitude)).miles
+    print("distance: ", distance)
+
+    
+    
     if debug_p:
         print("connecting to host " + host + ":" + str(port) +
               " topic " + topic)
