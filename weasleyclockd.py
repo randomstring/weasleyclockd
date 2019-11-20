@@ -16,11 +16,20 @@ debug_p = True
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     client.subscribe(userdata['topic'])
-    userdata['logger'].info("subscibing to topic [" + userdata['topic'] + "]")
-    userdata['logger'].info("Connected with result code "+str(rc))
+    userdata['logger'].info("subscibing to topic [" + userdata['topic'] +
+                            "] result code " + str(rc))
 
 
 def on_message(client, userdata, message):
+    # wrap the on_message() processing in a try:
+    try:
+        _on_message(client, userdata, message)
+    except Exception as e:
+        print("[ERROR] on_message() failed: {}".format(e))
+        userdata['logger'].error("on_message() failed: {}".format(e))
+
+
+def _on_message(client, userdata, message):
     topic = message.topic
     m_decode = str(message.payload.decode("utf-8", "ignore"))
     if debug_p:
@@ -28,10 +37,10 @@ def on_message(client, userdata, message):
               "' on topic '" + topic +
               "' with QoS " + str(message.qos))
 
-    log_snippet = (m_decode[:10] + '..') if len(m_decode) > 12 else m_decode
+    log_snippet = (m_decode[:15] + '..') if len(m_decode) > 17 else m_decode
     log_snippet = log_snippet.replace('\n', ' ')
 
-    (prefix, name) = topic.split('/',1)
+    (prefix, name) = topic.split('/', 1)
     
     userdata['logger'].info("Received message '" +
                             log_snippet +
@@ -46,6 +55,7 @@ def on_message(client, userdata, message):
         print("JSON decode failed. [" + parse_error.msg + "]")
         print("error at pos: " + parse_error.pos +
               " line: " + parse_error.lineno)
+        userdata['logger'].error("JSON decode failed.")
 
 
 def move_clock_hands(name, message, userdata):
@@ -101,16 +111,6 @@ def do_something(logf, configf):
     logger.info("connecting to host " + host + ":" + str(port) +
                 " topic " + topic)
 
-    latitude = 47.838232
-    longitude = -122.092915
-    latitude_home = float(config_data['latitude'])
-    longitude_home = float(config_data['longitude'])
-    distance = great_circle((latitude_home, longitude_home),
-                            (latitude, longitude)).miles
-    print("distance: ", distance)
-
-    
-    
     if debug_p:
         print("connecting to host " + host + ":" + str(port) +
               " topic " + topic)
@@ -136,6 +136,11 @@ def do_something(logf, configf):
     mqttc.on_message = on_message
 
     # intitialize clock hands
+
+    # mqtt_client.tls_set(ca_certs=TLS_CERT_PATH, certfile=None,
+    #                    keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
+    #                    tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)
+    # mqtt_client.tls_insecure_set(False)
 
     mqttc.connect(host, port, 60)
     mqttc.loop_forever()
