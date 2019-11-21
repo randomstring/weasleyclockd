@@ -2,8 +2,8 @@
 
 Python deamon listening for MQTT updates and controlling the motion of a Weasley Clock.
 
-This is part of my larger project to create a fully working (Weasley
-Clock)[https://github.com/randomstring/WeasleyClock] like in Harry Potter.
+This is part of my larger project to create a fully working [Weasley
+Clock](https://github.com/randomstring/WeasleyClock) like in Harry Potter.
 
 ## Weasley Clock Daemon
 
