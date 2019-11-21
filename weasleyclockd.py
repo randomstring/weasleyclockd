@@ -158,12 +158,32 @@ def move_clock_hands(name, message, userdata):
     print("Move " + name + " hand to " + state +
           " ({0:.1f} miles away)".format(distance))
 
-    # hand    = config_data.hand[name]
-    # channel = config_data.channel[hand]
-    # target_state   = states[state]
-    # base_angle = target_state.angle
-    # theta = target_state.theta
-    # style = target_state.offset_style
+    if name not in config_data['hand']:
+        print("Person " + name + " is not tracked by a clock hand")
+        return
+    hand = config_data['hand'][name]
+
+    if hand not in config_data['channel']:
+        print("Hand " + hand + " does not have a specified PWM channel")
+        userdata['logger'].error("Hand " + hand +
+                                 " does not have a specified PWM channel")
+        return
+    channel = config_data['channel'][hand]
+
+    if state not in states:
+        print("Unknown target state [" + state + "]")
+        userdata['logger'].error("Unknown target state [" + state + "]")
+        return
+
+    target_state = states[state]
+    base_angle = float(target_state['angle'])
+    theta = float(target_state['theta'])
+    style = target_state['offset_style']
+
+    print("name [" + name + "]")
+    print("hand [" + str(hand) + "] channel [" + str(channel) + "]")
+    print("base_angle [" + str(base_angle) + "] theta [" + str(theta) +
+          "] style [" + style + "]")
 
     userdata['logger'].info("Move [" + name +
                             "] hand to [" + state +
