@@ -87,10 +87,12 @@ states = {
 def on_connect(client, userdata, flags, rc):
     client.subscribe(userdata['topic'])
     if rc != 0:
-        userdata['logger'].info("subscibing to topic [" + userdata['topic'] +
-                                "] result code " + str(rc))
+        userdata['logger'].warning("subscibing to topic [" +
+                                   userdata['topic'] +
+                                   "] result code " + str(rc))
     else:
-        userdata['logger'].debug("subscibing to topic [" + userdata['topic'] +
+        userdata['logger'].debug("subscibing to topic [" +
+                                 userdata['topic'] +
                                  "] result code " + str(rc))
 
 
@@ -118,9 +120,9 @@ def _on_message(client, userdata, message):
     (prefix, name) = topic.split('/', 1)
 
     userdata['logger'].debug("Received message '" +
-                            log_snippet +
-                            "' on topic '" + topic +
-                            "' with QoS " + str(message.qos))
+                             log_snippet +
+                             "' on topic '" + topic +
+                             "' with QoS " + str(message.qos))
 
     print("data Received", m_decode)
     try:
@@ -158,12 +160,14 @@ def move_clock_hands(name, message, userdata):
 
     # hand    = config_data.hand[name]
     # channel = config_data.channel[hand]
-    
+    # target_state   = states[state]
+    # base_angle = target_state.angle
+    # theta = target_state.theta
+    # style = target_state.offset_style
+
     userdata['logger'].info("Move [" + name +
                             "] hand to [" + state +
                             "] ({0:.1f} miles away)".format(distance))
-
-
 
 
 def do_something(logf, configf):
