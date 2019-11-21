@@ -13,7 +13,7 @@ from time import sleep
 
 # HiTec HS-785HB Servo
 # https://www.servocity.com/hs-785hb-servo
-# set_puse_range(685, 2070)
+# set_pulse_range(685, 2070)
 # actuation_range = 2160 (6 * 360)
 # gets 6 full rotations, rated for up to 8 full rotations
 
