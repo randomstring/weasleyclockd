@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 import sys
 import os
 import time
@@ -233,7 +233,7 @@ def do_something(logf, configf):
     if 'actuation_range' in config_data:
         actuation_range = int(config_data['actuation_range'])
 
-    for (hand, servo) in config_data['channel']:
+    for (hand, servo) in config_data['channel'].items():
         kit.servo[servo].actuation_range = actuation_range
         kit.servo[servo].set_pulse_width_range(pulsewidth_min, pulsewidth_max)
         kit.servo[servo].angle = 0
