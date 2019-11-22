@@ -2,3 +2,4 @@ paho-mqtt
 python-daemon
 lockfile
 geopy
+adafruit-circuitpython-servokit
