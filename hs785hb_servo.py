@@ -5,11 +5,10 @@
 # See:
 # https://learn.adafruit.com/adafruit-16-channel-pwm-servo-hat-for-raspberry-pi/overview
 #
-
 import sys
 import getopt
 from adafruit_servokit import ServoKit
-from time import sleep
+
 
 # HiTec HS-785HB Servo
 # https://www.servocity.com/hs-785hb-servo
@@ -26,10 +25,11 @@ def main(argv):
     # defaults for hs-785hb-servo
     pw_min = 685
     pw_max = 2070
-    actuation_range = 2160   #  6 full rotations
+    actuation_range = 2160   # 6 full rotations
 
     try:
-        opts, args = getopt.getopt(argv,"hs:a:m:M:r:",["servos=","angle=","min=","max=","range="])
+        opts, args = getopt.getopt(argv, "hs:a:m:M:r:",
+                                   ["servos=", "angle=", "min=", "max=", "range="])
     except getopt.GetoptError:
         print('test_servohat.py -s <servos_list> -a <angle> -m <min_pw> -M <max_pw> -r <actuator_range>')
         sys.exit(2)
@@ -43,7 +43,7 @@ def main(argv):
             print('  -r <range>   range of motion in degrees (default ', actuation_range, ')')
             sys.exit()
         elif opt in ("-s", "--servo"):
-            servos = [ int(a) for a in arg.split(',') ]
+            servos = [int(a) for a in arg.split(',')]
         elif opt in ("-a", "--angle"):
             angle = int(arg)
         elif opt in ("-m", "--min"):
@@ -57,10 +57,12 @@ def main(argv):
     print('Angle: ', angle)
 
     for servo in servos:
-        print('servo: ', servo, ' to agle: ', angle, ' range: ', actuation_range)
+        print('servo: ', servo, ' to agle: ', angle,
+              ' range: ', actuation_range)
         kit.servo[servo].actuation_range = actuation_range
         kit.servo[servo].set_pulse_width_range(pw_min, pw_max)
         kit.servo[servo].angle = angle
+
 
 if __name__ == "__main__":
     main(sys.argv[1:])
