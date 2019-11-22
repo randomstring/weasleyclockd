@@ -9,6 +9,7 @@ import json
 import paho.mqtt.client as mqtt
 import lockfile
 from geopy.distance import great_circle
+from adafruit_servokit import ServoKit
 
 debug_p = True
 
@@ -220,11 +221,29 @@ def do_something(logf, configf):
         print("connecting to host " + host + ":" + str(port) +
               " topic " + topic)
 
+    # configure servos and zero clock hands
+    kit = ServoKit(channels=16)
+    pulsewidth_min = 685
+    pulsewidth_max = 2070
+    actuation_range = 2160
+    if 'pulsewidth_min' in config_data:
+        pulsewidth_min = int(config_data['pulsewidth_min'])
+    if 'pulsewidth_max' in config_data:
+        pulsewidth_max = int(config_data['pulsewidth_max'])
+    if 'actuation_range' in config_data:
+        actuation_range = int(config_data['actuation_range'])
+
+    for (hand, servo) in config_data['channel']:
+        kit.servo[servo].actuation_range = actuation_range
+        kit.servo[servo].set_pulse_width_range(pulsewidth_min, pulsewidth_max)
+        kit.servo[servo].angle = 0
+
     clockdata = {
         'logger': logger,
         'host': host,
         'port': port,
         'topic': topic,
+        'kit': kit,
         'config_data': config_data,
         }
 
@@ -240,12 +259,12 @@ def do_something(logf, configf):
     mqttc.on_connect = on_connect
     mqttc.on_message = on_message
 
-    # intitialize clock hands
 
-    # mqtt_client.tls_set(ca_certs=TLS_CERT_PATH, certfile=None,
+    # if port == 4884:
+    #     mqtt_client.tls_set(ca_certs=TLS_CERT_PATH, certfile=None,
     #                    keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
     #                    tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)
-    # mqtt_client.tls_insecure_set(False)
+    #     mqtt_client.tls_insecure_set(False)
 
     mqttc.connect(host, port, 60)
     mqttc.loop_forever()
