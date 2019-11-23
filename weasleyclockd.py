@@ -186,6 +186,10 @@ def move_clock_hands(name, message, userdata):
     print("base_angle [" + str(base_angle) + "] theta [" + str(theta) +
           "] style [" + style + "]")
 
+    servo_angle = int(2 * (360 - (base_angle + (theta / 2))))
+    print("servo angle: ", servo_angle)
+    userdata['kit'].servo[channel].angle = servo_angle
+
     userdata['logger'].info("Move [" + name +
                             "] hand to [" + state +
                             "] ({0:.1f} miles away)".format(distance))
