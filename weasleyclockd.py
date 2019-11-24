@@ -21,58 +21,60 @@ debug_p = True
 #   theta:   width of clock sector in degrees
 #   offset_style:   type of sub-sector hand placement
 #
+# Angles are measured counter clockwise (CCW) starting at the top of
+# the clock face. The servo measures angles CCW.
 states = {
     'home': {
         'name': 'Home',
-        'angle': 0,
+        'angle': 337.5,
         'theta': 22.5,
         'offset_style': 'home'
         },
     'barn': {
         'name': 'Barn',
-        'angle': 22.5,
+        'angle': 315,
         'theta': 22.5,
         'offset_style': 'home'
         },
     'mortalperil': {
         'name': 'Mortal Peril',
-        'angle': 45,
+        'angle': 270,
         'theta': 45,
         'offset_style': 'distance'
         },
     'quidditch': {
         'name': 'Quidditch',
-        'angle': 90,
+        'angle': 225,
         'theta': 45,
         'offset_style': 'distance'
         },
     'work': {
         'name': 'Work',
-        'angle': 135,
+        'angle': 180,
         'theta': 45,
-        'offset_style': 'distance'
+        'offset_style': 'hand'
         },
     'school': {
         'name': 'School',
-        'angle': 180,
+        'angle': 135,
         'theta': 45,
-        'offset_style': 'distance'
+        'offset_style': 'hand'
         },
     'garden': {
         'name': 'Garden',
-        'angle': 225,
+        'angle': 90,
         'theta': 45,
-        'offset_style': 'distance'
+        'offset_style': 'hand'
         },
     'intransit': {
         'name': 'In Transit',
-        'angle': 270,
+        'angle': 45,
         'theta': 45,
         'offset_style': 'distance'
         },
     'lost': {
         'name': 'Lost',
-        'angle': 315,
+        'angle': 0,
         'theta': 45,
         'offset_style': 'distance'
         },
@@ -80,13 +82,13 @@ states = {
         'name': 'Error',
         'angle': 0,
         'theta': 0,
-        'offset_style': 'distance'
+        'offset_style': 'hand'
         },
     }
 
 
 # calculate where in the sector to point the clock hands
-def angle_offset(angle, theta, distance, style):
+def angle_offset(angle, theta, distance, hand, style):
     if style == 'distance':
         # this formula creates a log scale of distance in the range [0.0,1.0]
         # (ln(distance + 1.1) - ln(1.1))/ln(10000)
@@ -95,6 +97,14 @@ def angle_offset(angle, theta, distance, style):
             scale = 0.0
         elif scale > 1.0:
             scale = 1.0
+        if angle < 180:
+            # left side of clock face
+            return scale * theta
+        else:
+            return theta - (scale * theta)
+    elif style == 'hand':
+        # each hand 0-3 has it's own small offset
+        scale = 0.8 * (hand / 3.0) + 0.1
         return scale * theta
     # middle of the sector
     return (theta / 2.0)
@@ -202,8 +212,8 @@ def move_clock_hands(name, message, userdata):
     print("base_angle [" + str(base_angle) + "] theta [" + str(theta) +
           "] style [" + style + "]")
 
-    offset = angle_offset(base_angle, theta, distance, style)
-    servo_angle = int(2 * (360 - (base_angle + offset)))
+    offset = angle_offset(base_angle, theta, distance, hand, style)
+    servo_angle = int(2 * (base_angle + offset))
     print("distance [", distance, "]  offset [", offset, "]")
     print("servo angle: ", servo_angle)
     userdata['kit'].servo[channel].angle = servo_angle
