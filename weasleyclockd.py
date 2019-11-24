@@ -104,7 +104,7 @@ def angle_offset(angle, theta, distance, hand, style):
             return theta - (scale * theta)
     elif style == 'hand':
         # each hand 0-3 has it's own small offset
-        scale = 0.8 * (hand / 3.0) + 0.1
+        scale = 0.8 * (float(hand) / 3.0) + 0.1
         return scale * theta
     # middle of the sector
     return (theta / 2.0)
@@ -154,12 +154,14 @@ def _on_message(client, userdata, message):
     print("data Received", m_decode)
     try:
         msg_data = json.loads(m_decode)
-        move_clock_hands(name, msg_data, userdata)
     except json.JSONDecodeError as parse_error:
         print("JSON decode failed. [" + parse_error.msg + "]")
         print("error at pos: " + parse_error.pos +
               " line: " + parse_error.lineno)
         userdata['logger'].error("JSON decode failed.")
+        return
+
+    move_clock_hands(name, msg_data, userdata)
 
 
 def move_clock_hands(name, message, userdata):
