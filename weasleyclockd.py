@@ -8,6 +8,7 @@ import daemon
 import json
 import paho.mqtt.client as mqtt
 import lockfile
+import numpy as np
 from geopy.distance import great_circle
 from adafruit_servokit import ServoKit
 
@@ -82,6 +83,21 @@ states = {
         'offset_style': 'distance'
         },
     }
+
+
+# calculate where in the sector to point the clock hands
+def angle_offset(angle, theta, distance, style):
+    if style == 'distance':
+        # this formula creates a log scale of distance in the range [0.0,1.0]
+        # (ln(distance + 1.1) - ln(1.1))/ln(10000)
+        scale = (np.log(distance + 1.1) - np.log(1.1))/np.log(10000)
+        if scale < 0.0:
+            scale = 0.0
+        elif scale > 1.0:
+            scale = 1.0
+        return scale * theta
+    # middle of the sector
+    return (theta / 2.0)
 
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -181,12 +197,14 @@ def move_clock_hands(name, message, userdata):
     theta = float(target_state['theta'])
     style = target_state['offset_style']
 
-    print("name [" + name + "]")
-    print("hand [" + str(hand) + "] channel [" + str(channel) + "]")
+#    print("name [" + name + "]")
+#    print("hand [" + str(hand) + "] channel [" + str(channel) + "]")
     print("base_angle [" + str(base_angle) + "] theta [" + str(theta) +
           "] style [" + style + "]")
 
-    servo_angle = int(2 * (360 - (base_angle + (theta / 2))))
+    offset = angle_offset(base_angle, theta, distance, style)
+    servo_angle = int(2 * (360 - (base_angle + offset)))
+    print("distance [", distance, "]  offset [", offset, "]")
     print("servo angle: ", servo_angle)
     userdata['kit'].servo[channel].angle = servo_angle
 
