@@ -113,6 +113,7 @@ def angle_offset(angle, theta, distance, hand, style):
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
     client.subscribe(userdata['topic'])
+    client.publish('weasleyclock/UPDATE', payload='{"update":"true"}', qos=0, retain=False)
     if rc != 0:
         userdata['logger'].warning("subscibing to topic [" +
                                    userdata['topic'] +
@@ -146,6 +147,10 @@ def _on_message(client, userdata, message):
 
     (prefix, name) = topic.split('/', 1)
 
+    if name == "UPDATE":
+        # this is an update request, ignore
+        return
+
     userdata['logger'].debug("Received message '" +
                              log_snippet +
                              "' on topic '" + topic +
@@ -154,12 +159,16 @@ def _on_message(client, userdata, message):
     print("data Received", m_decode)
     try:
         msg_data = json.loads(m_decode)
-    except json.JSONDecodeError as parse_error:
-        print("JSON decode failed. [" + parse_error.msg + "]")
-        print("error at pos: " + parse_error.pos +
-              " line: " + parse_error.lineno)
+    except ValueError as parse_error:
+        # python <=3.4.* use ValueError
+        print("JSON decode failed: " + str(parse_error))
         userdata['logger'].error("JSON decode failed.")
         return
+
+    # python >3.5 use:  except json.JSONDecodeError as parse_error:
+    # print("JSON decode failed. [" + parse_error.msg + "]")
+    # print("error at pos: " + parse_error.pos +
+    #      " line: " + parse_error.lineno)
 
     move_clock_hands(name, msg_data, userdata)
 
