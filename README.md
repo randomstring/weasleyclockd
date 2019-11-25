@@ -13,6 +13,13 @@ Weasley Clock. Hand position is controlled using [HS-785HB
 servos](https://www.servocity.com/hs-785hb-servo) controlled by a
 [Servo Hat](https://www.adafruit.com/product/2327).
 
+Updates for hand positions are recieved via MQTT messages. I use Home
+Assistant to determine the location of each person and update the
+state. Home Assistant sends a MQTT message on the **weasleyclock**
+topic for each person. The **weasleyclockd** sends a update request
+message when it connects to Home Assistant using a
+**weasleyclock/UPDATE** request.
+
 ## Server Hat
 
 Follow these instructions to setup your servo HAT and install the
