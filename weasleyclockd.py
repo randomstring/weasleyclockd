@@ -12,7 +12,7 @@ import numpy as np
 from geopy.distance import great_circle
 from adafruit_servokit import ServoKit
 
-debug_p = True
+debug_p = False
 
 #
 # Configuration of the Clock face
@@ -130,7 +130,6 @@ def on_message(client, userdata, message):
     try:
         _on_message(client, userdata, message)
     except Exception as e:
-        print("[ERROR] on_message() failed: {}".format(e))
         userdata['logger'].error("on_message() failed: {}".format(e))
 
 
@@ -156,12 +155,12 @@ def _on_message(client, userdata, message):
                              "' on topic '" + topic +
                              "' with QoS " + str(message.qos))
 
-    print("data Received", m_decode)
     try:
         msg_data = json.loads(m_decode)
     except ValueError as parse_error:
         # python <=3.4.* use ValueError
-        print("JSON decode failed: " + str(parse_error))
+        if debug_p:
+            print("JSON decode failed: " + str(parse_error))
         userdata['logger'].error("JSON decode failed.")
         return
 
@@ -193,23 +192,23 @@ def move_clock_hands(name, message, userdata):
         distance = great_circle((latitude_home, longitude_home),
                                 (latitude, longitude)).miles
 
-    print("Move " + name + " hand to " + state +
-          " ({0:.1f} miles away)".format(distance))
+    if debug_p:
+        print("Move " + name + " hand to " + state +
+              " ({0:.1f} miles away)".format(distance))
 
     if name not in config_data['hand']:
-        print("Person " + name + " is not tracked by a clock hand")
+        if debug_p:
+            print("Person " + name + " is not tracked by a clock hand")
         return
     hand = config_data['hand'][name]
 
     if hand not in config_data['channel']:
-        print("Hand " + hand + " does not have a specified PWM channel")
         userdata['logger'].error("Hand " + hand +
                                  " does not have a specified PWM channel")
         return
     channel = config_data['channel'][hand]
 
     if state not in states:
-        print("Unknown target state [" + state + "]")
         userdata['logger'].error("Unknown target state [" + state + "]")
         return
 
@@ -218,20 +217,19 @@ def move_clock_hands(name, message, userdata):
     theta = float(target_state['theta'])
     style = target_state['offset_style']
 
-#    print("name [" + name + "]")
-#    print("hand [" + str(hand) + "] channel [" + str(channel) + "]")
-    print("base_angle [" + str(base_angle) + "] theta [" + str(theta) +
-          "] style [" + style + "]")
-
     offset = angle_offset(base_angle, theta, distance, hand, style)
     servo_angle = int(2 * (base_angle + offset))
-    print("distance [", distance, "]  offset [", offset, "]")
-    print("servo angle: ", servo_angle)
     userdata['kit'].servo[channel].angle = servo_angle
 
     userdata['logger'].info("Move [" + name +
                             "] hand to [" + state +
                             "] ({0:.1f} miles away)".format(distance))
+
+    if debug_p:
+        print("base_angle [" + str(base_angle) + "] theta [" + str(theta) +
+              "] style [" + style + "]")
+        print("distance [", distance, "]  offset [", offset, "]")
+        print("servo angle: ", servo_angle)
 
 
 def do_something(logf, configf):
@@ -279,7 +277,7 @@ def do_something(logf, configf):
     for (hand, servo) in config_data['channel'].items():
         kit.servo[servo].actuation_range = actuation_range
         kit.servo[servo].set_pulse_width_range(pulsewidth_min, pulsewidth_max)
-        kit.servo[servo].angle = 0
+        # kit.servo[servo].angle = 0
 
     clockdata = {
         'logger': logger,
@@ -341,8 +339,12 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--working-dir', default='/var/lib/weasleyclock')
     parser.add_argument('-c', '--config-file', default='/etc/weasleyclock.json')
     parser.add_argument('-n', '--no-daemon', action="store_true")
+    parser.add_argument('-v', '--verbose', action="store_true")
 
     args = parser.parse_args()
+
+    if args.verbose:
+        debug_p = True
 
     start_daemon(pidf=args.pid_file,
                  logf=args.log_file,
