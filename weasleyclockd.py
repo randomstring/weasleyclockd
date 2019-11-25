@@ -301,12 +301,13 @@ def do_something(logf, configf):
     mqttc.on_connect = on_connect
     mqttc.on_message = on_message
 
+    if port == 4883 or port == 4884:
+        mqttc.tls_set('/etc/ssl/certs/ca-certificates.crt');
 
-    # if port == 4884:
-    #     mqtt_client.tls_set(ca_certs=TLS_CERT_PATH, certfile=None,
+        #     mqttc.tls_set(ca_certs=TLS_CERT_PATH, certfile=None,
     #                    keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
     #                    tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)
-    #     mqtt_client.tls_insecure_set(False)
+    #     mqttc.tls_insecure_set(False)
 
     mqttc.connect(host, port, 60)
     mqttc.loop_forever()
