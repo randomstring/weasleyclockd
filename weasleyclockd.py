@@ -336,8 +336,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Weasley Clock Deamon")
     parser.add_argument('-p', '--pid-file', default='/var/run/weasleyclock.pid')
     parser.add_argument('-l', '--log-file', default='/var/log/weasleyclock.log')
-    parser.add_argument('-d', '--working-dir', default='/var/lib/weasleyclock')
-    parser.add_argument('-c', '--config-file', default='/etc/weasleyclock.json')
+    parser.add_argument('-d', '--working-dir', default='/var/lib/weasleyclockd')
+    parser.add_argument('-c', '--config-file', default='/etc/weasleyclockd.json')
     parser.add_argument('-n', '--no-daemon', action="store_true")
     parser.add_argument('-v', '--verbose', action="store_true")
 
