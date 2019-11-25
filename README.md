@@ -20,6 +20,22 @@ topic for each person. The **weasleyclockd** sends a update request
 message when it connects to Home Assistant using a
 **weasleyclock/UPDATE** request.
 
+## Installation
+
+`bash
+pip3 install -r requirements.txt
+`
+
+TODO: investigate installing into /etc/rc.local or creating a initd
+wrapper with the ability to do reload and a clean shutdown.
+
+### CAVEATS
+
+The python daemon is written to be run on a Raspberry Pi 3. My build
+uses Python 3.4.2. If porting to Python 3.5 or later,
+**json.JSONDecodeError** should be used for the JSON decoder exception
+handler.
+
 ## Server Hat
 
 Follow these instructions to setup your servo HAT and install the
