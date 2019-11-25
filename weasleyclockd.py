@@ -135,6 +135,13 @@ def on_message(client, userdata, message):
 
 def _on_message(client, userdata, message):
     topic = message.topic
+
+    (prefix, name) = topic.split('/', 1)
+
+    if name == "UPDATE":
+        # this is an update request, ignore
+        return
+
     m_decode = str(message.payload.decode("utf-8", "ignore"))
     if debug_p:
         print("Received message '" + m_decode +
@@ -143,12 +150,6 @@ def _on_message(client, userdata, message):
 
     log_snippet = (m_decode[:15] + '..') if len(m_decode) > 17 else m_decode
     log_snippet = log_snippet.replace('\n', ' ')
-
-    (prefix, name) = topic.split('/', 1)
-
-    if name == "UPDATE":
-        # this is an update request, ignore
-        return
 
     userdata['logger'].debug("Received message '" +
                              log_snippet +
