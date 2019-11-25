@@ -1,0 +1,28 @@
+{
+    "mqtt_host": "mqtt.example.com",
+    "mqtt_port": 1883,
+    "mqtt_topic": "weasleyclock/#",
+    "mqtt_user": "weasleyclock",
+    "mqtt_password": "PASSWORD",
+    
+    "hand": {
+	"ron":    "0",
+	"ginny":  "1",
+	"arthur": "2",
+	"molly":  "3"
+    },
+
+    "channel": {
+	"0": 0,
+	"1": 2,
+	"2": 4,
+	"3": 6
+    },
+    
+    "latitude": "-11.613306",
+    "longitude": "166.969389",
+
+    "pulsewidth_min": 685,
+    "pulsewidth_max": 2070,
+    "actuation_range": 2160
+}
