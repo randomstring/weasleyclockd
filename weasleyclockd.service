@@ -1,0 +1,15 @@
+[Unit]
+Description=Weasley Clock
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/pi/weasleyclockd/weasleyclockd.py
+WorkingDirectory=/home/pi/weasleyclockd
+StandardOutput=inherit
+StandardError=inherit
+Type=idle
+Restart=on-success
+User=pi
+
+[Install]
+WantedBy=multi-user.target
