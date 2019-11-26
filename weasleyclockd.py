@@ -158,17 +158,17 @@ def _on_message(client, userdata, message):
 
     try:
         msg_data = json.loads(m_decode)
-    except ValueError as parse_error:
-        # python <=3.4.* use ValueError
+    except json.JSONDecodeError as parse_error:
         if debug_p:
-            print("JSON decode failed: " + str(parse_error))
+            print("JSON decode failed. [" + parse_error.msg + "]")
+            print("error at pos: " + parse_error.pos +
+                  " line: " + parse_error.lineno)
         userdata['logger'].error("JSON decode failed.")
-        return
 
-    # python >3.5 use:  except json.JSONDecodeError as parse_error:
-    # print("JSON decode failed. [" + parse_error.msg + "]")
-    # print("error at pos: " + parse_error.pos +
-    #      " line: " + parse_error.lineno)
+    # python <=3.4.* use ValueError
+    # except ValueError as parse_error:
+    #    if debug_p:
+    #        print("JSON decode failed: " + str(parse_error))
 
     move_clock_hands(name, msg_data, userdata)
 
@@ -249,7 +249,13 @@ def do_something(logf, configf):
 
     # read config file
     with open(configf) as json_data_file:
-        config_data = json.load(json_data_file)
+        try:
+            config_data = json.load(json_data_file)
+        except json.JSONDecodeError as parse_error:
+            print("JSON decode failed. [" + parse_error.msg + "]")
+            print("error at pos: ", parse_error.pos,
+                  " line: ",  parse_error.lineno)
+            sys.exit(1)
 
     # connect to MQTT server
     host = config_data['mqtt_host']
