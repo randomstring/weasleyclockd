@@ -31,7 +31,7 @@ on the clock face.
 
 For sectors that have a fixed distance from **Home** like **School**
 or **Work**, I divide the sector into four sub-positions, one for each
-hand. So that even if the whole family is at **School* all the hands
+hand. So that even if the whole family is at **School** all the hands
 won't be stacked up on top of each other. This makes them more
 readable.
 
