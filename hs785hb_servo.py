@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Test script for controlling a set of HiTec HS-785HB Servos.
 #
