@@ -185,9 +185,11 @@ def move_clock_hands(name, message, userdata):
         latitude = float(message['latitude'])
     if 'longitude' in message:
         longitude = float(message['longitude'])
+    if 'distance' in message:
+        distance = float(message['distance'])
 
-    distance = 0.0
-    if latitude and longitude:
+    # distance overides lat/lon
+    if distance == 0.0 and latitude and longitude:
         latitude_home = float(config_data['latitude'])
         longitude_home = float(config_data['longitude'])
         distance = great_circle((latitude_home, longitude_home),
@@ -271,20 +273,27 @@ def do_something(logf, configf):
 
     # configure servos and zero clock hands
     kit = ServoKit(channels=16)
-    pulsewidth_min = 685
-    pulsewidth_max = 2070
-    actuation_range = 2160
-    if 'pulsewidth_min' in config_data:
-        pulsewidth_min = int(config_data['pulsewidth_min'])
-    if 'pulsewidth_max' in config_data:
-        pulsewidth_max = int(config_data['pulsewidth_max'])
-    if 'actuation_range' in config_data:
-        actuation_range = int(config_data['actuation_range'])
 
     for (hand, servo) in config_data['channel'].items():
+        # default (good starting point for hs785hb servo)
+        pulsewidth_min = 685
+        pulsewidth_max = 2070
+        actuation_range = 2160
+
+        # get per servo/channel configuration
+        if 'channel_config' in config_data:
+            if string(servo) in config_data['channel_config']:
+                channel_config = config_data['channel_config'][string(servo)]
+                if 'pulsewidth_min' in channel_config:
+                    pulsewidth_min = int(channel_config['pulsewidth_min'])
+                if 'pulsewidth_max' in channel_config:
+                    pulsewidth_max = int(channel_config['pulsewidth_max'])
+                if 'actuation_range' in channel_config:
+                    actuation_range = int(channel_config['actuation_range'])
+
         kit.servo[servo].actuation_range = actuation_range
         kit.servo[servo].set_pulse_width_range(pulsewidth_min, pulsewidth_max)
-        # kit.servo[servo].angle = 0
+
 
     clockdata = {
         'logger': logger,
@@ -310,7 +319,7 @@ def do_something(logf, configf):
     if port == 4883 or port == 4884:
         mqttc.tls_set('/etc/ssl/certs/ca-certificates.crt');
 
-        #     mqttc.tls_set(ca_certs=TLS_CERT_PATH, certfile=None,
+    #     mqttc.tls_set(ca_certs=TLS_CERT_PATH, certfile=None,
     #                    keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
     #                    tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)
     #     mqttc.tls_insecure_set(False)
