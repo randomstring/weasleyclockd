@@ -1,6 +1,7 @@
 # weasleyclockd
 
-Python daemon listening for MQTT updates and controlling the motion of a Weasley Clock.
+Python daemon listening for MQTT updates and controlling the motion of
+a Weasley Clock.
 
 This is part of my larger project to create a fully working [Weasley
 Clock](https://github.com/randomstring/WeasleyClock) like in Harry Potter.
@@ -55,11 +56,10 @@ sudo systemctl start weasleyclockd.service
 tail -f /home/pi/weasleyclockd/weasleyclock.log
 ```
 
-## Server Hat
+## Servo Hat
 
 Follow these instructions to setup your servo HAT and install the
-necessary
-software. https://learn.adafruit.com/adafruit-16-channel-pwm-servo-hat-for-raspberry-pi
+necessary software. <https://learn.adafruit.com/adafruit-16-channel-pwm-servo-hat-for-raspberry-pi>
 
 ## Utilities
 
