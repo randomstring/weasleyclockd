@@ -282,8 +282,8 @@ def do_something(logf, configf):
 
         # get per servo/channel configuration
         if 'channel_config' in config_data:
-            if string(servo) in config_data['channel_config']:
-                channel_config = config_data['channel_config'][string(servo)]
+            if str(servo) in config_data['channel_config']:
+                channel_config = config_data['channel_config'][str(servo)]
                 if 'pulsewidth_min' in channel_config:
                     pulsewidth_min = int(channel_config['pulsewidth_min'])
                 if 'pulsewidth_max' in channel_config:
