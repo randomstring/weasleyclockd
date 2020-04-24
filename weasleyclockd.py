@@ -221,7 +221,8 @@ def move_clock_hands(name, message, userdata):
     style = target_state['offset_style']
 
     offset = angle_offset(base_angle, theta, distance, hand, style)
-    servo_angle = int(2 * (base_angle + offset))
+    # add 720 to keep servos closer to the center of their range
+    servo_angle = int(2 * (base_angle + offset)) + 720
     userdata['kit'].servo[channel].angle = servo_angle
 
     userdata['logger'].info("Move [" + name +
