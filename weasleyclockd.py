@@ -87,8 +87,10 @@ states = {
     }
 
 
-# calculate where in the sector to point the clock hands
 def angle_offset(angle, theta, distance, hand, style):
+    '''
+    Calculate where in the sector to point the clock hands.
+    '''
     if style == 'distance':
         # this formula creates a log scale of distance in the range [0.0,1.0]
         # (ln(distance + 1.1) - ln(1.1))/ln(10000)
@@ -318,7 +320,7 @@ def do_something(logf, configf):
     mqttc.on_message = on_message
 
     if port == 4883 or port == 4884:
-        mqttc.tls_set('/etc/ssl/certs/ca-certificates.crt');
+        mqttc.tls_set('/etc/ssl/certs/ca-certificates.crt')
 
     #     mqttc.tls_set(ca_certs=TLS_CERT_PATH, certfile=None,
     #                    keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
