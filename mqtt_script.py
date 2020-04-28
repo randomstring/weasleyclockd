@@ -9,7 +9,7 @@ import paho.mqtt.client as mqtt
 debug_p = True
 
 
-def run_script(working_dir, config_file, script_file):
+def run_script(config_file, script_file):
     '''
     config_file holds the address of the MQTT server and login credentials
     script_file JSON file with array of MQTT events to send
@@ -62,7 +62,7 @@ def run_script(working_dir, config_file, script_file):
         mqttc.tls_set('/etc/ssl/certs/ca-certificates.crt')
 
     mqttc.connect(host, port, 60)
-
+    print("All Done.")
 
 def on_connect(client, userdata, flags, rc):
     '''
@@ -71,11 +71,10 @@ def on_connect(client, userdata, flags, rc):
     client.subscribe(userdata['topic'])
     print("subscibing to topic [" + userdata['topic'] +
           "] result code " + str(rc))
-    # TODO: send MQTT messages
 
-    # types of events: MSG, sleep, distance range
-    
-    # TODO: when done exit
+    send_mqtt_messages(client, userdata)
+
+    # TODO: do we need to do anything when done?
 
 
 def on_message(client, userdata, message):
@@ -84,6 +83,49 @@ def on_message(client, userdata, message):
     script of MQTT messages.
     '''
     return
+
+
+def send_mqtt_messages(client, userdata):
+    '''
+    Iterate over the list of messages in the script and send them.
+    '''
+    script = userdata['script']
+    for msg in script:
+        topic = 'weaselyclock/susan'
+        if 'topic' in msg:
+            topic = msg['topic']
+        if 'type' in msg:
+            if msg['type'] == 'sleep':
+                t = 1
+                if 'time' in msg:
+                    t = msg['time']
+                print("SLEEP for " + t + " seconds")
+                time.sleep(t)
+            elif msg['type'] == 'range':
+                range_key = 'distance'
+                if 'range_key' in msg:
+                    range_key = msg['_range_key']
+                (start, stop, inc) = (50, 0, -1)
+                if 'range' in msg:
+                    (start, stop, inc) = msg['_range']
+                print("RANGE: ", range_key, "(" + start, stop, inc, ")")
+                for val in range(start, stop, inc):
+                    m = msg['msg']
+                    m[range_key] = val
+                    send_message(client, userdata, m)
+                    time.sleep(1)
+            else:
+                send_message(client, userdata, topic, msg)
+
+
+def send_message(client, userdata, topic, message):
+    '''
+    Send MQTT message
+    '''
+    json_msg = json.dump(message)
+    print(json_msg)
+    # client.publish(topic, payload=json_msg, qos=0, retain=False)
+    pass
 
 
 if __name__ == "__main__":
@@ -97,5 +139,5 @@ if __name__ == "__main__":
     if args.verbose:
         debug_p = True
 
-    run_script(configf=args.config_file,
-               script=args.sctript_file)
+    run_script(config_file=args.config_file,
+               script_file=args.script_file)
