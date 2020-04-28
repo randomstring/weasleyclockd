@@ -57,24 +57,26 @@ def run_script(config_file, script_file):
     # create callbacks
     mqttc.on_connect = on_connect
     mqttc.on_message = on_message
+    mqttc.connected_flag = False
 
     if port == 4883 or port == 4884:
         mqttc.tls_set('/etc/ssl/certs/ca-certificates.crt')
 
+    mqttc.loop_start()
     mqttc.connect(host, port, 60)
+    while not mqttc.connected_flag:
+        time.sleep(0.1)
+    send_mqtt_messages(mqttc, userdata={"script": script_data, "topic": topic})
+    mqttc.loop_stop()
+    mqttc.disconnect()
     print("All Done.")
+
 
 def on_connect(client, userdata, flags, rc):
     '''
     Connect to the MQTT server, then start sending MQTT messages from our script.
     '''
-    client.subscribe(userdata['topic'])
-    print("subscibing to topic [" + userdata['topic'] +
-          "] result code " + str(rc))
-
-    send_mqtt_messages(client, userdata)
-
-    # TODO: do we need to do anything when done?
+    client.connected_flag = True
 
 
 def on_message(client, userdata, message):
@@ -90,7 +92,10 @@ def send_mqtt_messages(client, userdata):
     Iterate over the list of messages in the script and send them.
     '''
     script = userdata['script']
+    print("send_mqtt_messages")
+    print(script)
     for msg in script:
+        print(msg)
         topic = 'weaselyclock/susan'
         if 'topic' in msg:
             topic = msg['topic']
@@ -112,20 +117,22 @@ def send_mqtt_messages(client, userdata):
                 for val in range(start, stop, inc):
                     m = msg['msg']
                     m[range_key] = val
-                    send_message(client, userdata, m)
+                    send_message(client, topic, m)
                     time.sleep(1)
             else:
-                send_message(client, userdata, topic, msg)
+                print("Unkown message type [", msg['type'], "]")
+        else:
+            send_message(client, topic, msg['msg'])
 
 
-def send_message(client, userdata, topic, message):
+def send_message(client, topic, message):
     '''
     Send MQTT message
     '''
-    json_msg = json.dump(message)
-    print(json_msg)
-    # client.publish(topic, payload=json_msg, qos=0, retain=False)
-    pass
+    print("send_message")
+    json_msg = json.dumps(message)
+    print(topic, json_msg)
+    client.publish(topic, payload=json_msg, qos=0, retain=False)
 
 
 if __name__ == "__main__":
