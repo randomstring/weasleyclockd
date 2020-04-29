@@ -2,9 +2,25 @@
     {
 	"topic":"weasleyclock/bryn",
 	"type": "range",
-	"range": [500,0,-1],
+	"range": [500,0,-25],
 	"msg": {
 	    "state":"lost"
 	}
-    }
+    },
+    {
+	"topic":"weasleyclock/bryn",
+	"type": "range",
+	"range": [25,0,-1],
+	"msg": {
+	    "state":"lost"
+	}
+    },
+    {
+	"topic":"weasleyclock/bryn",
+	"msg": {
+	    "state":"home",
+	    "distance": 0,
+	}
+    },
+ 
 ]
