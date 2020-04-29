@@ -7,7 +7,7 @@ import json
 import paho.mqtt.client as mqtt
 
 debug_p = True
-
+dryrun = False
 
 def run_script(config_file, script_file):
     '''
@@ -47,9 +47,10 @@ def run_script(config_file, script_file):
               " topic " + topic)
 
     # how to mqtt in python see https://pypi.org/project/paho-mqtt/
+    user_data = {"script": script_data, "topic": topic}
     mqttc = mqtt.Client(client_id='mqtt_script_play',
                         clean_session=True,
-                        userdata={"script": script_data, "topic": topic})
+                        userdata=user_data)
 
     mqttc.username_pw_set(config_data['mqtt_user'],
                           config_data['mqtt_password'])
@@ -66,7 +67,7 @@ def run_script(config_file, script_file):
     mqttc.connect(host, port, 60)
     while not mqttc.connected_flag:
         time.sleep(0.1)
-    send_mqtt_messages(mqttc, userdata={"script": script_data, "topic": topic})
+    send_mqtt_messages(mqttc, userdata=user_data)
     time.sleep(2)
     mqttc.loop_stop()
     mqttc.disconnect()
@@ -93,10 +94,12 @@ def send_mqtt_messages(client, userdata):
     Iterate over the list of messages in the script and send them.
     '''
     script = userdata['script']
-    print("send_mqtt_messages")
-    print(script)
+    if debug_p:
+        print("send_mqtt_messages")
+        print(script)
     for msg in script:
-        print(msg)
+        if debug_p:
+            print(msg)
         topic = 'weaselyclock/susan'
         if 'topic' in msg:
             topic = msg['topic']
@@ -110,16 +113,20 @@ def send_mqtt_messages(client, userdata):
             elif msg['type'] == 'range':
                 range_key = 'distance'
                 if 'range_key' in msg:
-                    range_key = msg['_range_key']
+                    range_key = msg['range_key']
+                wait = 0.1
+                if 'sleep' in msg:
+                    wait = msg['sleep']
                 (start, stop, inc) = (50, 0, -1)
                 if 'range' in msg:
-                    (start, stop, inc) = msg['_range']
-                print("RANGE: ", range_key, "(" + start, stop, inc, ")")
+                    (start, stop, inc) = msg['range']
+                if debug_p:
+                    print("RANGE: ", range_key, "(", start, stop, inc, ")")
                 for val in range(start, stop, inc):
                     m = msg['msg']
                     m[range_key] = val
                     send_message(client, topic, m)
-                    time.sleep(1)
+                    time.sleep(wait)
             else:
                 print("Unkown message type [", msg['type'], "]")
         else:
@@ -130,10 +137,13 @@ def send_message(client, topic, message):
     '''
     Send MQTT message
     '''
-    print("send_message")
+    if debug_p:
+        print("send_message")
     json_msg = json.dumps(message)
-    print(topic, json_msg)
-    client.publish(topic, payload=json_msg, qos=2, retain=False)
+    if debug_p:
+        print(topic, json_msg)
+    if not dryrun:
+        client.publish(topic, payload=json_msg, qos=2, retain=False)
 
 
 if __name__ == "__main__":
@@ -141,11 +151,15 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--config-file', default='/home/pi/weasleyclockd/weasleyclockd.json')
     parser.add_argument('-s', '--script-file', default='/home/pi/weasleyclockd/demo_mqtt.json')
     parser.add_argument('-v', '--verbose', action="store_true")
+    parser.add_argument('-d', '--dryrun', action="store_true")
 
     args = parser.parse_args()
 
     if args.verbose:
         debug_p = True
+
+    if args.dryrun:
+        dryrun = True
 
     run_script(config_file=args.config_file,
                script_file=args.script_file)
