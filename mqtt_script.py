@@ -108,7 +108,7 @@ def send_mqtt_messages(client, userdata):
                 t = 1
                 if 'time' in msg:
                     t = msg['time']
-                print("SLEEP for " + t + " seconds")
+                print("SLEEP for ", t , " seconds")
                 time.sleep(t)
             elif msg['type'] == 'range':
                 range_key = 'distance'
