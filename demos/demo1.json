@@ -2,7 +2,7 @@
     {
 	"topic":"weaselyclock/bryn",
 	"msg": {
-	    "state":"intransit",
+	    "state":"lost",
 	    "distance":"500"
 	}
     }
