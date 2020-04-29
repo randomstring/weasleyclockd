@@ -67,6 +67,7 @@ def run_script(config_file, script_file):
     while not mqttc.connected_flag:
         time.sleep(0.1)
     send_mqtt_messages(mqttc, userdata={"script": script_data, "topic": topic})
+    time.sleep(2)
     mqttc.loop_stop()
     mqttc.disconnect()
     print("All Done.")
@@ -132,7 +133,7 @@ def send_message(client, topic, message):
     print("send_message")
     json_msg = json.dumps(message)
     print(topic, json_msg)
-    client.publish(topic, payload=json_msg, qos=0, retain=False)
+    client.publish(topic, payload=json_msg, qos=2, retain=False)
 
 
 if __name__ == "__main__":
