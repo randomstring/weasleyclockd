@@ -100,7 +100,7 @@ def send_mqtt_messages(client, userdata):
     for msg in script:
         if debug_p:
             print(msg)
-        topic = 'weaselyclock/susan'
+        topic = 'weasleyclock/susan'
         if 'topic' in msg:
             topic = msg['topic']
         if 'type' in msg:

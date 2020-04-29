@@ -1,6 +1,6 @@
 [
     {
-	"topic":"weaselyclock/bryn",
+	"topic":"weasleyclock/bryn",
 	"type": "range",
 	"range": [500,0,-1],
 	"msg": {
