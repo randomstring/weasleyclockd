@@ -319,7 +319,7 @@ def do_something(logf, configf):
     mqttc.on_connect = on_connect
     mqttc.on_message = on_message
 
-    if port == 4883 or port == 4884:
+    if port == 4883 or port == 4884 or port == 8883 or port == 8884:
         mqttc.tls_set('/etc/ssl/certs/ca-certificates.crt')
 
     #     mqttc.tls_set(ca_certs=TLS_CERT_PATH, certfile=None,
