@@ -264,7 +264,7 @@ def do_something(logf, configf):
 
     # connect to MQTT server
     host = config_data['mqtt_host']
-    port = config_data['mqtt_port'] if 'mqtt_port' in config_data else 4884
+    port = config_data['mqtt_port'] if 'mqtt_port' in config_data else 8883
     topic = config_data['mqtt_topic'] if 'mqtt_topic' in config_data else 'weasleyclock/#'
 
     logger.info("connecting to host " + host + ":" + str(port) +

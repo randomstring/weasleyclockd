@@ -39,7 +39,7 @@ def run_script(config_file, script_file):
 
     # connect to MQTT server
     host = config_data['mqtt_host']
-    port = config_data['mqtt_port'] if 'mqtt_port' in config_data else 4884
+    port = config_data['mqtt_port'] if 'mqtt_port' in config_data else 8883
     topic = config_data['mqtt_topic'] if 'mqtt_topic' in config_data else 'weasleyclock/#'
 
     if debug_p:
@@ -60,7 +60,7 @@ def run_script(config_file, script_file):
     mqttc.on_message = on_message
     mqttc.connected_flag = False
 
-    if port == 4883 or port == 4884:
+    if port == 4883 or port == 4884 or port == 8883 or port == 8884:
         mqttc.tls_set('/etc/ssl/certs/ca-certificates.crt')
 
     mqttc.loop_start()
