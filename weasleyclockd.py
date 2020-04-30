@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 import sys
-import os
-import time
 import argparse
 import logging
 import daemon
@@ -112,8 +110,10 @@ def angle_offset(angle, theta, distance, hand, style):
     return (theta / 2.0)
 
 
-# The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
+    '''
+    The callback for when the client receives a CONNACK response from the server.
+    '''
     client.subscribe(userdata['topic'])
     client.publish('weasleyclock/UPDATE', payload='{"update":"true"}', qos=0, retain=False)
     if rc != 0:
@@ -126,8 +126,10 @@ def on_connect(client, userdata, flags, rc):
                                  "] result code " + str(rc))
 
 
-# Callback for MQTT messages
 def on_message(client, userdata, message):
+    '''
+    Callback for recieved MQTT messages.
+    '''
     # wrap the on_message() processing in a try:
     try:
         _on_message(client, userdata, message)
@@ -136,6 +138,9 @@ def on_message(client, userdata, message):
 
 
 def _on_message(client, userdata, message):
+    '''
+    Callback for recieved MQTT messages.
+    '''
     topic = message.topic
 
     (prefix, name) = topic.split('/', 1)
@@ -176,6 +181,9 @@ def _on_message(client, userdata, message):
 
 
 def move_clock_hands(name, message, userdata):
+    '''
+    Move Clock Hands. Move user hand to the indicated state and style.
+    '''
     config_data = userdata['config_data']
     state = None
     latitude = None
@@ -222,6 +230,11 @@ def move_clock_hands(name, message, userdata):
     theta = float(target_state['theta'])
     style = target_state['offset_style']
 
+    # Use hand style for Quidditch when still at home. This is to cover
+    # the case when riding Zwift indoors.
+    if state == 'quidditch' and distance < 0.2:
+        style = 'hand'
+
     offset = angle_offset(base_angle, theta, distance, hand, style)
     # add 720 to keep servos closer to the center of their range
     servo_angle = int(2 * (base_angle + offset)) + 720
@@ -239,6 +252,9 @@ def move_clock_hands(name, message, userdata):
 
 
 def do_something(logf, configf):
+    '''
+    Main routine.
+    '''
 
     #
     # setup logging
@@ -297,7 +313,6 @@ def do_something(logf, configf):
         kit.servo[servo].actuation_range = actuation_range
         kit.servo[servo].set_pulse_width_range(pulsewidth_min, pulsewidth_max)
 
-
     clockdata = {
         'logger': logger,
         'host': host,
@@ -322,16 +337,14 @@ def do_something(logf, configf):
     if port == 4883 or port == 4884 or port == 8883 or port == 8884:
         mqttc.tls_set('/etc/ssl/certs/ca-certificates.crt')
 
-    #     mqttc.tls_set(ca_certs=TLS_CERT_PATH, certfile=None,
-    #                    keyfile=None, cert_reqs=ssl.CERT_REQUIRED,
-    #                    tls_version=ssl.PROTOCOL_TLSv1_2, ciphers=None)
-    #     mqttc.tls_insecure_set(False)
-
     mqttc.connect(host, port, 60)
     mqttc.loop_forever()
 
 
 def start_daemon(pidf, logf, wdir, configf, nodaemon):
+    '''
+    Start the daemon.
+    '''
     global debug_p
 
     if nodaemon:
@@ -349,7 +362,6 @@ def start_daemon(pidf, logf, wdir, configf, nodaemon):
                                   umask=0o002,
                                   pidfile=lockfile.FileLock(pidf),) as context:
             do_something(logf, configf)
-
 
 
 if __name__ == "__main__":
