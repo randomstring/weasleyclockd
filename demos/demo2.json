@@ -2,7 +2,7 @@
     {
         "topic":"weasleyclock/bryn",
         "msg": {
-            "state":"last",
+            "state":"lost",
             "distance": 500
         }
     },
@@ -26,6 +26,46 @@
 	"range": [25,0,-1],
 	"msg": {
 	    "state":"intransit"
+	}
+    },
+    {
+	"topic":"weasleyclock/bryn",
+	"msg": {
+	    "state": "intransit",
+	    "distance": 0.8
+	}
+    },
+    {
+	"type": "sleep",
+        "time": 0.3
+    },
+    {
+	"topic":"weasleyclock/bryn",
+	"msg": {
+	    "state": "intransit",
+	    "distance": 0.5
+	}
+    },
+    {
+	"type": "sleep",
+        "time": 0.3
+    },
+    {
+	"topic":"weasleyclock/bryn",
+	"msg": {
+	    "state": "intransit",
+	    "distance": 0.2
+	}
+    },
+    {
+	"type": "sleep",
+        "time": 0.5
+    },
+    {
+	"topic":"weasleyclock/bryn",
+	"msg": {
+	    "state": "intransit",
+	    "distance": 0.1
 	}
     },
     {
