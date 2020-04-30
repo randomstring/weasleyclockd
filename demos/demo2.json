@@ -8,7 +8,7 @@
     },
     {
 	"type": "sleep",
-        "time": 3
+        "time": 5
     },
     {
 	"topic":"weasleyclock/bryn",
