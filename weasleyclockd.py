@@ -85,6 +85,11 @@ states = {
     }
 
 
+def log_distance(distance):
+    scale = (np.log(distance + 1.1) - np.log(1.1))/np.log(10000)
+    return scale
+
+
 def angle_offset(angle, theta, distance, hand, style):
     '''
     Calculate where in the sector to point the clock hands.
@@ -92,7 +97,7 @@ def angle_offset(angle, theta, distance, hand, style):
     if style == 'distance':
         # this formula creates a log scale of distance in the range [0.0,1.0]
         # (ln(distance + 1.1) - ln(1.1))/ln(10000)
-        scale = (np.log(distance + 1.1) - np.log(1.1))/np.log(10000)
+        scale = log_distance(distance)
         if scale < 0.0:
             scale = 0.0
         elif scale > 1.0:
