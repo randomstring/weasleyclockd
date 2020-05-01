@@ -24,56 +24,56 @@ debug_p = False
 states = {
     'home': {
         'name': 'Home',
-        'angle': 337.5,
-        'theta': 22.5,
+        'angle': 340,
+        'theta': 20,
         'offset_style': 'home'
         },
     'barn': {
         'name': 'Barn',
-        'angle': 315,
-        'theta': 22.5,
+        'angle': 320,
+        'theta': 20,
         'offset_style': 'home'
         },
     'mortalperil': {
         'name': 'Mortal Peril',
         'angle': 270,
-        'theta': 45,
+        'theta': 50,
         'offset_style': 'distance'
         },
     'quidditch': {
         'name': 'Quidditch',
-        'angle': 225,
-        'theta': 45,
+        'angle': 220,
+        'theta': 50,
         'offset_style': 'distance'
         },
     'work': {
         'name': 'Work',
         'angle': 180,
-        'theta': 45,
+        'theta': 40,
         'offset_style': 'hand'
         },
     'school': {
         'name': 'School',
-        'angle': 135,
-        'theta': 45,
+        'angle': 140,
+        'theta': 40,
         'offset_style': 'hand'
         },
     'garden': {
         'name': 'Garden',
         'angle': 90,
-        'theta': 45,
+        'theta': 50,
         'offset_style': 'hand'
         },
     'intransit': {
         'name': 'In Transit',
-        'angle': 45,
-        'theta': 45,
+        'angle': 40,
+        'theta': 50,
         'offset_style': 'distance'
         },
     'lost': {
         'name': 'Lost',
         'angle': 0,
-        'theta': 45,
+        'theta': 40,
         'offset_style': 'distance'
         },
     'error': {
