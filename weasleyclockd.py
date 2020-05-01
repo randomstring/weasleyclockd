@@ -86,6 +86,30 @@ states = {
 
 
 def log_distance(distance):
+    '''Map a distance to a log based scale.
+
+    This formula creates a log scale of distance in the range [0.0,1.0]
+    scale = (ln(distance + 1.1) - ln(1.1))/ln(10000)
+    0     -> 0.00  (min)
+    0.5   -> 0.04
+    1     -> 0.07
+    2     -> 0.11
+    5     -> 0.18
+    10    -> 0.25
+    25    -> 0.34
+    50    -> 0.42
+    500   -> 0.66
+    9000  -> 0.97
+
+    This scaling factor is used to place the hand within the given
+    segment. A scale of zero, puts the hand closer to home while a
+    scale of 1.0 puts the hand farthest from home.
+
+    This provides much more resolution near home. Small changes of
+    distances near home can be seen, while small and medium changes of
+    distance when far from home are roughly idenital.
+
+    '''
     scale = (np.log(distance + 1.1) - np.log(1.1))/np.log(10000)
     return scale
 
@@ -95,8 +119,6 @@ def angle_offset(angle, theta, distance, hand, style):
     Calculate where in the sector to point the clock hands.
     '''
     if style == 'distance':
-        # this formula creates a log scale of distance in the range [0.0,1.0]
-        # (ln(distance + 1.1) - ln(1.1))/ln(10000)
         scale = log_distance(distance)
         if scale < 0.0:
             scale = 0.0
