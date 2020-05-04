@@ -26,13 +26,13 @@ states = {
         'name': 'Home',
         'angle': 340,
         'theta': 20,
-        'offset_style': 'home'
+        'offset_style': 'staggered'
         },
     'barn': {
         'name': 'Barn',
         'angle': 320,
         'theta': 20,
-        'offset_style': 'home'
+        'offset_style': 'staggered'
         },
     'mortalperil': {
         'name': 'Mortal Peril',
@@ -50,19 +50,19 @@ states = {
         'name': 'Work',
         'angle': 180,
         'theta': 40,
-        'offset_style': 'hand'
+        'offset_style': 'staggered'
         },
     'school': {
         'name': 'School',
         'angle': 140,
         'theta': 40,
-        'offset_style': 'hand'
+        'offset_style': 'staggered'
         },
     'garden': {
         'name': 'Garden',
         'angle': 90,
         'theta': 50,
-        'offset_style': 'hand'
+        'offset_style': 'staggered'
         },
     'intransit': {
         'name': 'In Transit',
@@ -80,7 +80,7 @@ states = {
         'name': 'Error',
         'angle': 0,
         'theta': 0,
-        'offset_style': 'hand'
+        'offset_style': 'none'
         },
     }
 
@@ -129,7 +129,7 @@ def angle_offset(angle, theta, distance, hand, style):
             return scale * theta
         else:
             return theta - (scale * theta)
-    elif style == 'hand':
+    elif style == 'staggered' or style == 'home':
         # each hand 0-3 has it's own small offset
         scale = 0.8 * (float(hand) / 3.0) + 0.1
         return scale * theta
@@ -260,7 +260,7 @@ def move_clock_hands(name, message, userdata):
     # Use hand style for Quidditch when still at home. This is to cover
     # the case when riding Zwift indoors.
     if state == 'quidditch' and distance < 0.2:
-        style = 'hand'
+        style = 'staggered'
 
     offset = angle_offset(base_angle, theta, distance, hand, style)
     # add 720 to keep servos closer to the center of their range
