@@ -1,0 +1,180 @@
+[
+    {
+        "topic":"weasleyclock/bryn",
+        "msg": {
+            "state":"home",
+            "distance": 0
+        }
+    },
+    {
+        "topic":"weasleyclock/susan",
+        "msg": {
+            "state":"home",
+            "distance": 0
+        }
+    },
+    {
+        "topic":"weasleyclock/alex",
+        "msg": {
+            "state":"home",
+            "distance": 0
+        }
+    },
+    {
+        "topic":"weasleyclock/evelyn",
+        "msg": {
+            "state":"home",
+            "distance": 0
+        }
+    },
+    {
+	"type": "sleep",
+        "time": 3
+    },
+    {
+        "topic":"weasleyclock/alex",
+        "msg": {
+            "state":"intransit",
+            "distance": 5
+        }
+    },
+    {
+        "topic":"weasleyclock/evelyn",
+        "msg": {
+            "state":"intransit",
+            "distance": 5
+        }
+    },
+    {
+	"type": "sleep",
+        "time": 3
+    },
+    {
+        "topic":"weasleyclock/alex",
+        "msg": {
+            "state":"school",
+            "distance": 10
+        }
+    },
+    {
+        "topic":"weasleyclock/evelyn",
+        "msg": {
+            "state":"school",
+            "distance": 10
+        }
+    },
+    {
+	"type": "sleep",
+        "time": 3
+    },    
+    {
+        "topic":"weasleyclock/bryn",
+        "msg": {
+            "state":"intransit",
+            "distance": 5
+        }
+    },
+    {
+	"type": "sleep",
+        "time": 3
+    },    
+    {
+        "topic":"weasleyclock/bryn",
+        "msg": {
+            "state":"intransit",
+            "distance": 15
+        }
+    },
+    {
+	"type": "sleep",
+        "time": 3
+    },    
+    {
+        "topic":"weasleyclock/bryn",
+        "msg": {
+            "state":"work",
+            "distance": 15
+        }
+    },
+    {
+	"type": "sleep",
+        "time": 3
+    },    
+    {
+        "topic":"weasleyclock/susan",
+        "msg": {
+            "state":"garden",
+            "distance": 0.3
+        }
+    },
+    {
+	"type": "sleep",
+        "time": 3
+    },
+    {
+        "topic":"weasleyclock/alex",
+        "msg": {
+            "state":"intransit",
+            "distance": 5
+        }
+    },
+    {
+        "topic":"weasleyclock/evelyn",
+        "msg": {
+            "state":"intransit",
+            "distance": 5
+        }
+    },
+    {
+	"type": "sleep",
+        "time": 2
+    },
+    {
+        "topic":"weasleyclock/alex",
+        "msg": {
+            "state":"home",
+            "distance": 0
+        }
+    },
+    {
+        "topic":"weasleyclock/evelyn",
+        "msg": {
+            "state":"home",
+            "distance": 0
+        }
+    },
+    {
+        "topic":"weasleyclock/susan",
+        "msg": {
+            "state":"home",
+            "distance": 0
+        }
+    },
+    {
+	"type": "sleep",
+        "time": 3
+    },
+    {
+        "topic":"weasleyclock/bryn",
+        "msg": {
+            "state":"intransit",
+            "distance": 15
+        }
+    },
+    {
+	"type": "sleep",
+        "time": 3
+    },    
+    {
+        "topic":"weasleyclock/bryn",
+        "msg": {
+            "state":"home",
+            "distance": 0
+        }
+    },
+    {
+	"type": "sleep",
+        "time": 3
+    }
+
+]
