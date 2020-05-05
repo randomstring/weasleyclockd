@@ -56,10 +56,6 @@
 	}
     },
     {
-	"type": "sleep",
-        "time": 0.7
-    },
-    {
 	"topic":"weasleyclock/bryn",
 	"msg": {
 	    "state": "intransit",
