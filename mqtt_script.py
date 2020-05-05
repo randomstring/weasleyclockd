@@ -6,7 +6,7 @@ import argparse
 import json
 import paho.mqtt.client as mqtt
 
-debug_p = True
+debug_p = False
 dryrun = False
 
 def run_script(config_file, script_file):
@@ -96,10 +96,7 @@ def send_mqtt_messages(client, userdata):
     script = userdata['script']
     if debug_p:
         print("send_mqtt_messages")
-        print(script)
     for msg in script:
-        if debug_p:
-            print(msg)
         topic = 'weasleyclock/susan'
         if 'topic' in msg:
             topic = msg['topic']
@@ -108,7 +105,8 @@ def send_mqtt_messages(client, userdata):
                 t = 1
                 if 'time' in msg:
                     t = msg['time']
-                print("SLEEP for ", t , " seconds")
+                if debug_p:
+                    print("SLEEP for ", t, " seconds")
                 time.sleep(t)
             elif msg['type'] == 'range':
                 range_key = 'distance'
