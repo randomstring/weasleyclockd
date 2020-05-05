@@ -47,7 +47,7 @@
     },
     {
 	"type": "sleep",
-        "time": 3
+        "time": 5
     },
     {
         "topic":"weasleyclock/alex",
@@ -98,7 +98,7 @@
     },
     {
 	"type": "sleep",
-        "time": 3
+        "time": 4
     },    
     {
         "topic":"weasleyclock/susan",
@@ -109,7 +109,7 @@
     },
     {
 	"type": "sleep",
-        "time": 3
+        "time": 5
     },
     {
         "topic":"weasleyclock/alex",
@@ -152,7 +152,7 @@
     },
     {
 	"type": "sleep",
-        "time": 3
+        "time": 4
     },
     {
         "topic":"weasleyclock/bryn",
