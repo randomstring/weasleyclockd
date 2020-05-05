@@ -32,9 +32,18 @@
     },
     {
 	"topic":"weasleyclock/bryn",
-	"sleep": 1,
+	"sleep": 0.8,
 	"type": "range",
-	"range": [25,0,-1],
+	"range": [25,0,-5],
+	"msg": {
+	    "state":"intransit"
+	}
+    },
+    {
+	"topic":"weasleyclock/bryn",
+	"sleep": 0.8,
+	"type": "range",
+	"range": [4,0,-1],
 	"msg": {
 	    "state":"intransit"
 	}
@@ -48,7 +57,7 @@
     },
     {
 	"type": "sleep",
-        "time": 0.3
+        "time": 0.7
     },
     {
 	"topic":"weasleyclock/bryn",
@@ -59,7 +68,7 @@
     },
     {
 	"type": "sleep",
-        "time": 0.3
+        "time": 0.7
     },
     {
 	"topic":"weasleyclock/bryn",
@@ -70,7 +79,7 @@
     },
     {
 	"type": "sleep",
-        "time": 0.5
+        "time": 0.7
     },
     {
 	"topic":"weasleyclock/bryn",
