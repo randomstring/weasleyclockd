@@ -393,7 +393,7 @@ def start_daemon(pidf, logf, wdir, configf, nodaemon):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Weasley Clock Deamon")
-    parser.add_argument('-p', '--pid-file', default='/home/pi/weasleyclockd/weasleyclock.pid')
+    parser.add_argument('-p', '--pid-file', default='/run/lock/weasleyclockd.pid')
     parser.add_argument('-l', '--log-file', default='/home/pi/weasleyclockd/weasleyclock.log')
     parser.add_argument('-d', '--working-dir', default='/home/pi/weasleyclockd')
     parser.add_argument('-c', '--config-file', default='/home/pi/weasleyclockd/weasleyclockd.json')
