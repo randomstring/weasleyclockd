@@ -2,6 +2,7 @@
 import sys
 import argparse
 import logging
+import logging.handlers
 import daemon
 import json
 import paho.mqtt.client as mqtt
@@ -288,12 +289,22 @@ def do_something(logf, configf):
     #
     logger = logging.getLogger('weasleyclock')
     logger.setLevel(logging.INFO)
-    fh = logging.FileHandler(logf)
-    fh.setLevel(logging.INFO)
+
     formatstr = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     formatter = logging.Formatter(formatstr)
-    fh.setFormatter(formatter)
-    logger.addHandler(fh)
+
+    handler = logging.handlers.RotatingFileHandler(
+              logf, maxBytes=1049600, backupCount=10)
+
+    handler.setLevel(logging.INFO)
+    handler.setFormatter(formatter)
+    logger.addHandler(handler)
+
+    # Old logger, without log rotation
+    # fh = logging.FileHandler(logf)
+    # fh.setLevel(logging.INFO)
+    # fh.setFormatter(formatter)
+    # logger.addHandler(fh)
 
     # read config file
     with open(configf) as json_data_file:
