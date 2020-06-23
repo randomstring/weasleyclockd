@@ -364,7 +364,15 @@ def do_something(logf, configf):
     if port == 4883 or port == 4884 or port == 8883 or port == 8884:
         mqttc.tls_set('/etc/ssl/certs/ca-certificates.crt')
 
-    mqttc.connect(host, port, 60)
+    while(True):
+        try:
+            mqttc.connect(host, port, 60)
+            break
+        except Exception as e:
+            # Connection failure.
+            userdata['logger'].error("connect() failed: {}".format(e))
+            time.sleep(60)
+
     mqttc.loop_forever()
 
 
