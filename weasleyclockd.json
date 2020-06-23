@@ -22,7 +22,26 @@
     "latitude": "-11.613306",
     "longitude": "166.969389",
 
-    "pulsewidth_min": 685,
-    "pulsewidth_max": 2070,
-    "actuation_range": 2160
+    "channel_config": {
+	"0": {
+	    "pulsewidth_min": 660,
+	    "pulsewidth_max": 2070,
+	    "actuation_range": 2160
+	},
+	"2": {
+	    "pulsewidth_min": 685,
+	    "pulsewidth_max": 2050,
+	    "actuation_range": 2160
+	},
+	"4": {
+	    "pulsewidth_min": 685,
+	    "pulsewidth_max": 2080,
+	    "actuation_range": 2160
+	},
+	"6": {
+	    "pulsewidth_min": 685,
+	    "pulsewidth_max": 2050,
+	    "actuation_range": 2160
+	}
+    }
 }
