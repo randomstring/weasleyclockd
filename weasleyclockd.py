@@ -90,17 +90,20 @@ def log_distance(distance):
     '''Map a distance to a log based scale.
 
     This formula creates a log scale of distance in the range [0.0,1.0]
-    scale = (ln(distance + 1.1) - ln(1.1))/ln(10000)
-    0     -> 0.00  (min)
-    0.5   -> 0.04
-    1     -> 0.07
-    2     -> 0.11
-    5     -> 0.18
-    10    -> 0.25
-    25    -> 0.34
-    50    -> 0.42
-    500   -> 0.66
-    9000  -> 0.97
+       0.0  ->  0.00
+       0.5  ->  0.07
+       1.0  ->  0.12
+       2.0  ->  0.18
+       5.0  ->  0.28
+      10.0  ->  0.36
+      15.0  ->  0.41
+      25.0  ->  0.47
+      50.0  ->  0.56
+     100.0  ->  0.65
+     500.0  ->  0.85
+    2500.0  ->  1.00  max distance that can be differentiated
+    6000.0  ->  1.00
+    9000.0  ->  1.00
 
     This scaling factor is used to place the hand within the given
     segment. A scale of zero, puts the hand closer to home while a
@@ -111,7 +114,13 @@ def log_distance(distance):
     distance when far from home are roughly idenital.
 
     '''
-    scale = (np.log(distance + 1.1) - np.log(1.1))/np.log(10000)
+    mult = 1.7
+    max_dist = 2500
+    scale = (np.log(mult * distance + 1.1) - np.log(1.1))/np.log(max_dist)
+    if scale < 0.0:
+        scale = 0.0
+    elif scale > 1.0:
+        scale = 1.0
     return scale
 
 
@@ -121,10 +130,6 @@ def angle_offset(angle, theta, distance, hand, style):
     '''
     if style == 'distance':
         scale = log_distance(distance)
-        if scale < 0.0:
-            scale = 0.0
-        elif scale > 1.0:
-            scale = 1.0
         if angle < 180:
             # left side of clock face
             return scale * theta
