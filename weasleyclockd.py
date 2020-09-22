@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import sys
+import time
 import argparse
 import logging
 import logging.handlers
@@ -386,7 +387,7 @@ def do_something(logf, configf):
             break
         except Exception as e:
             # Connection failure.
-            userdata['logger'].error("connect() failed: {}".format(e))
+            logger.error("connect() failed: {}".format(e))
             time.sleep(60)
 
     mqttc.loop_forever()
