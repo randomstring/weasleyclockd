@@ -89,6 +89,7 @@ states = {
 # Holds the current state of the clock hands
 current_state = {}
 
+
 def log_distance(distance):
     '''Map a distance to a log based scale.
 
@@ -219,23 +220,24 @@ def _on_message(client, userdata, message):
 
 def update_hand_state(name, state, style, distance, offset, servo_angle):
     '''
-    Set the clock hand position in the global state. 
+    Set the clock hand position in the global state.
     '''
     current_state[name] = {
         'state': state,
         'syle': style,
         'distance': distance,
         'offset': offset,
-        'servo_angle': servo_angle
+        'servo_angle': servo_angle,
         'updated': time.time()
         }
+
 
 def num_hands_in_state(state):
     '''
     return the number of hands in a given state
     '''
     count = 0
-    foreach name in current_state:
+    for name in current_state:
         if current_state[name].state == state:
             count = count + 1
     return count
@@ -243,6 +245,7 @@ def num_hands_in_state(state):
 # TODO: function to update all the clock hand positions
 # TODO: only update hand position for Garden/Home/Barn if it's been the same for 15 seconds (configurable)
 # TODO: call update hand function periodically (use scheduler)
+
 
 def move_clock_hands(name, message, userdata):
     '''
@@ -446,6 +449,7 @@ def start_daemon(pidf, logf, wdir, configf, nodaemon):
                                   umask=0o002,
                                   pidfile=lockfile.FileLock(pidf),) as context:
             do_something(logf, configf)
+            context.close()
 
 
 if __name__ == "__main__":
