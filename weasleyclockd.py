@@ -74,8 +74,8 @@ states = {
         },
     'lost': {
         'name': 'Lost',
-        'angle': 0,
-        'theta': 40,
+        'angle': 5,      # leave 5 degrees, to avoid confusion w/ Home
+        'theta': 35,
         'offset_style': 'distance'
         },
     'error': {
@@ -86,6 +86,8 @@ states = {
         },
     }
 
+# Holds the current state of the clock hands
+current_state = {}
 
 def log_distance(distance):
     '''Map a distance to a log based scale.
@@ -138,6 +140,7 @@ def angle_offset(angle, theta, distance, hand, style):
             return theta - (scale * theta)
     elif style == 'staggered' or style == 'home':
         # each hand 0-3 has it's own small offset
+        # TODO: redo this to take into account how many hands are in this sector
         scale = 0.8 * (float(hand) / 3.0) + 0.1
         return scale * theta
     # middle of the sector
@@ -214,6 +217,33 @@ def _on_message(client, userdata, message):
     move_clock_hands(name, msg_data, userdata)
 
 
+def update_hand_state(name, state, style, distance, offset, servo_angle):
+    '''
+    Set the clock hand position in the global state. 
+    '''
+    current_state[name] = {
+        'state': state,
+        'syle': style,
+        'distance': distance,
+        'offset': offset,
+        'servo_angle': servo_angle
+        'updated': time.time()
+        }
+
+def num_hands_in_state(state):
+    '''
+    return the number of hands in a given state
+    '''
+    count = 0
+    foreach name in current_state:
+        if current_state[name].state == state:
+            count = count + 1
+    return count
+
+# TODO: function to update all the clock hand positions
+# TODO: only update hand position for Garden/Home/Barn if it's been the same for 15 seconds (configurable)
+# TODO: call update hand function periodically (use scheduler)
+
 def move_clock_hands(name, message, userdata):
     '''
     Move Clock Hands. Move user hand to the indicated state and style.
@@ -273,6 +303,8 @@ def move_clock_hands(name, message, userdata):
     # add 720 to keep servos closer to the center of their range
     servo_angle = int(2 * (base_angle + offset)) + 720
     userdata['kit'].servo[channel].angle = servo_angle
+
+    update_hand_state(name, state, style, distance, offset, servo_angle)
 
     userdata['logger'].info("Move [" + name +
                             "] hand to [" + state +
