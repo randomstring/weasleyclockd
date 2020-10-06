@@ -9,7 +9,6 @@ import json
 import paho.mqtt.client as mqtt
 import lockfile
 import numpy as np
-import asyncio
 from geopy.distance import great_circle
 from adafruit_servokit import ServoKit
 
@@ -30,7 +29,7 @@ states = {
         'angle': 340,
         'theta': 20,
         'offset_style': 'staggered',
-        'update_delay': 30
+        'update_delay': 3
         },
     'barn': {
         'name': 'Barn',
@@ -151,7 +150,7 @@ def angle_offset(state, angle, theta, distance, hand, style):
         if num_hands < 2:
             scale = 0.5
         else:
-            scale = 0.8 * (float(hand % num_hands) / float(num_hands + 1)) + 0.1
+            scale = 0.8 * (float(int(hand) % num_hands) / float(num_hands + 1)) + 0.1
         return scale * theta
     # middle of the sector
     return (theta / 2.0)
@@ -232,6 +231,7 @@ def update_hand_state(name, state, distance):
     Set the clock hand position in the global state.
     '''
     current_state[name] = {
+        'name': name,
         'state': state,
         'distance': distance,
         'updated': time.time()
@@ -244,38 +244,33 @@ def num_hands_in_state(state):
     '''
     count = 0
     for name in current_state:
-        if current_state[name].state == state:
+        if current_state[name]['state'] == state:
             count = count + 1
     return count
 
 
-async def update_all_hands(clockdata):
+def update_all_hands(clockdata):
     # TODO: function to update all the clock hand positions
     '''
     Iterate over all the hands and update the current physical postion to match the current state.
     '''
     now = time.time()
-    config_data = clockdata['config_data']
     delayed_update = False
     for name in current_state:
-        state = current_state['state']
-        if 'update_delay' in config_data[state]:
-            update_delay = config_data[state]['update_delay']
+        state = current_state[name]['state']
+        if 'update_delay' in states[state]:
+            update_delay = states[state]['update_delay']
         else:
             update_delay = 0
-        if current_state[name].updated + update_delay <= now:
+        if not 'updated' in current_state[name]:
+            print("no updated entry for " + name );
+            current_state[name]['updated'] = 0
+        if current_state[name]['updated'] + update_delay <= now:
             move_clock_hand(current_state[name], clockdata)
         else:
             delayed_update = True
             if debug_p:
-                print("delay update of [" + name + "] to state [" + state + "] for " + update_delay)
-
-    if delayed_update:
-        await asyncio.sleep(1)
-        if debug_p:
-            print("retrying update_all_hands")
-        update_all_hands(clockdata)
-
+                print("delay update of [" + name + "] to state [" + state + "] for " + str(update_delay))
 
 def move_clock_hand(userstate, clockdata):
     '''
@@ -359,7 +354,7 @@ def update_clock_state(name, message, clockdata):
                                 (latitude, longitude)).miles
 
     update_hand_state(name, state, distance)
-    update_all_hands(clockdata)
+#    update_all_hands(clockdata)
 
 
 def do_something(logf, configf):
@@ -467,7 +462,31 @@ def do_something(logf, configf):
             logger.error("connect() failed: {}".format(e))
             time.sleep(60)
 
-    mqttc.loop_forever()
+# If we don't run our own loop, then loop forever
+#    mqttc.loop_forever()
+
+    mqttc.loop_start()
+
+    while True:
+        print("running update_all_hands")
+        update_all_hands(m_clockdata)
+        time.sleep(1)
+
+# no Try, only do. So that things actually crash if there's a bug.
+#    while True:
+#        try:
+#            update_all_hands(m_clockdata)
+#            time.sleep(1)
+#        except Exception as e:
+#            print(e)
+#            if debug_p:
+#               print("update_all_hands() failed: {}".format(e))
+#            logger.error("update_all_hands() failed: {}".format(e))
+#            time.sleep(60)
+
+    mqttc.disconnect()
+    mqttc.loop_stop()
+
 
 
 def start_daemon(pidf, logf, wdir, configf, nodaemon):
