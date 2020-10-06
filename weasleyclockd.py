@@ -227,7 +227,7 @@ def _on_message(client, clockdata, message):
     update_clock_state(name, msg_data, clockdata)
 
 
-def update_hand_state(name, state, style, distance):
+def update_hand_state(name, state, distance):
     '''
     Set the clock hand position in the global state.
     '''
@@ -358,7 +358,7 @@ def update_clock_state(name, message, clockdata):
         distance = great_circle((latitude_home, longitude_home),
                                 (latitude, longitude)).miles
 
-    update_hand_state(name, state, style, distance)
+    update_hand_state(name, state, distance)
     update_all_hands(clockdata)
 
 
