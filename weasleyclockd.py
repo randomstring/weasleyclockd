@@ -249,7 +249,7 @@ def num_hands_in_state(state):
     return count
 
 
-def update_all_hands(clockdata):
+async def update_all_hands(clockdata):
     # TODO: function to update all the clock hand positions
     '''
     Iterate over all the hands and update the current physical postion to match the current state.
@@ -358,7 +358,7 @@ def update_clock_state(name, message, clockdata):
         distance = great_circle((latitude_home, longitude_home),
                                 (latitude, longitude)).miles
 
-    update_hand_state(name, state, distance)
+    update_hand_state(name, state, style, distance)
     update_all_hands(clockdata)
 
 
@@ -446,7 +446,7 @@ def do_something(logf, configf):
     # how to mqtt in python see https://pypi.org/project/paho-mqtt/
     mqttc = mqtt.Client(client_id='weasleyclockd',
                         clean_session=True,
-                        clockdata=m_clockdata)
+                        userdata=m_clockdata)
 
     mqttc.username_pw_set(config_data['mqtt_user'],
                           config_data['mqtt_password'])
