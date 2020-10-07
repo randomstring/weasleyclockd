@@ -132,7 +132,7 @@ def log_distance(distance):
     return scale
 
 
-def angle_offset(state, angle, theta, distance, hand, style):
+def angle_offset(state, angle, theta, distance, hand, style, config_data):
     '''
     Calculate where in the sector to point the clock hands.
     '''
@@ -145,11 +145,15 @@ def angle_offset(state, angle, theta, distance, hand, style):
             return theta - (scale * theta)
     elif style == 'staggered' or style == 'home':
         # each hand 0-3 has it's own small offset, calculated based on how many hands are in each sector
-        num_hands = num_hands_in_state(state)
+        hands = hands_in_state(state, config_data)
+        num_hands = len(hands)
         if num_hands < 2:
+            # one hand, place in the middle of the sector
             scale = 0.5
         else:
-            scale = 0.8 * (float(int(hand) % num_hands) / float(num_hands)) + 0.1
+            # evenly space the hands within the sector
+            index = hands.index(hand)
+            scale = 0.8 * (float(index) / float(num_hands - 1.0)) + 0.1
         return scale * theta
     # middle of the sector
     return (theta / 2.0)
@@ -238,17 +242,20 @@ def update_hand_state(name, state, distance):
         }
 
 
-def num_hands_in_state(state):
+def hands_in_state(state, config_data):
     '''
-    return the number of hands in a given state
+    return a sorted list of all the hands in the given state
     '''
-    count = 0
+    hands = []
     for name in current_state:
         # only count hands that have already been moved.
         # TODO: BUG: the count will be off for hands that haven't moved yet.
-        if current_state[name]['state'] == state && current_state[name]['hand_moved']:
-            count = count + 1
-    return count
+        if current_state[name]['state'] == state and current_state[name]['hand_moved']:
+            if name in config_data['hand']:
+                hand = config_data['hand'][name]
+                hands.append(hand)
+    hands.sort()
+    return hands
 
 
 def update_all_hands(clockdata):
@@ -313,7 +320,7 @@ def move_clock_hand(userstate, clockdata):
     if state == 'quidditch' and distance < 0.2:
         style = 'staggered'
 
-    offset = angle_offset(state, base_angle, theta, distance, hand, style)
+    offset = angle_offset(state, base_angle, theta, distance, hand, style, config_data)
     # add 720 to keep servos closer to the center of their range
     servo_angle = int(2 * (base_angle + offset)) + 720
     clockdata['kit'].servo[channel].angle = servo_angle
