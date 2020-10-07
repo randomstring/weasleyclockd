@@ -144,13 +144,12 @@ def angle_offset(state, angle, theta, distance, hand, style):
         else:
             return theta - (scale * theta)
     elif style == 'staggered' or style == 'home':
-        # each hand 0-3 has it's own small offset
-        # TODO: redo this to take into account how many hands are in this sector
+        # each hand 0-3 has it's own small offset, calculated based on how many hands are in each sector
         num_hands = num_hands_in_state(state)
         if num_hands < 2:
             scale = 0.5
         else:
-            scale = 0.8 * (float(int(hand) % num_hands) / float(num_hands + 1)) + 0.1
+            scale = 0.8 * (float(int(hand) % num_hands) / float(num_hands)) + 0.1
         return scale * theta
     # middle of the sector
     return (theta / 2.0)
@@ -234,7 +233,8 @@ def update_hand_state(name, state, distance):
         'name': name,
         'state': state,
         'distance': distance,
-        'updated': time.time()
+        'updated': time.time(),
+        'hand_moved': False
         }
 
 
@@ -244,13 +244,14 @@ def num_hands_in_state(state):
     '''
     count = 0
     for name in current_state:
-        if current_state[name]['state'] == state:
+        # only count hands that have already been moved.
+        # TODO: BUG: the count will be off for hands that haven't moved yet.
+        if current_state[name]['state'] == state && current_state[name]['hand_moved']:
             count = count + 1
     return count
 
 
 def update_all_hands(clockdata):
-    # TODO: function to update all the clock hand positions
     '''
     Iterate over all the hands and update the current physical postion to match the current state.
     '''
@@ -267,10 +268,12 @@ def update_all_hands(clockdata):
             current_state[name]['updated'] = 0
         if current_state[name]['updated'] + update_delay <= now:
             move_clock_hand(current_state[name], clockdata)
+            current_state[name]['hand_moved'] = True
         else:
             delayed_update = True
             if debug_p:
                 print("delay update of [" + name + "] to state [" + state + "] for " + str(update_delay))
+
 
 def move_clock_hand(userstate, clockdata):
     '''
@@ -325,8 +328,6 @@ def move_clock_hand(userstate, clockdata):
         print("distance [", distance, "]  offset [", offset, "]")
         print("servo angle: ", servo_angle)
 
-
-# TODO: call update hand function periodically (use scheduler)
 
 def update_clock_state(name, message, clockdata):
     '''
