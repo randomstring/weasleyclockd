@@ -153,7 +153,10 @@ def angle_offset(state, angle, theta, distance, hand, style, config_data):
         else:
             # evenly space the hands within the sector
             index = hands.index(hand)
-            scale = 0.8 * (float(index) / float(num_hands - 1.0)) + 0.1
+            if num_hands == 2:
+                scale = 0.5 * (float(index) / float(num_hands - 1.0)) + 0.25
+            else:
+                scale = 0.8 * (float(index) / float(num_hands - 1.0)) + 0.1
         return scale * theta
     # middle of the sector
     return (theta / 2.0)
