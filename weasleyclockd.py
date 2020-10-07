@@ -29,7 +29,7 @@ states = {
         'angle': 340,
         'theta': 20,
         'offset_style': 'staggered',
-        'update_delay': 3
+        'update_delay': 30
         },
     'barn': {
         'name': 'Barn',
@@ -250,7 +250,7 @@ def hands_in_state(state, config_data):
     for name in current_state:
         # only count hands that have already been moved.
         # TODO: BUG: the count will be off for hands that haven't moved yet.
-        if current_state[name]['state'] == state and current_state[name]['hand_moved']:
+        if current_state[name]['state'] == state:  #< and current_state[name]['hand_moved']:
             if name in config_data['hand']:
                 hand = config_data['hand'][name]
                 hands.append(hand)
@@ -325,9 +325,10 @@ def move_clock_hand(userstate, clockdata):
     servo_angle = int(2 * (base_angle + offset)) + 720
     clockdata['kit'].servo[channel].angle = servo_angle
 
-    clockdata['logger'].info("Move [" + name +
-                             "] hand to [" + state +
-                             "] ({0:.1f} miles away)".format(distance))
+    if not current_state[name]['hand_moved']:
+        clockdata['logger'].info("Move [" + name +
+                                 "] hand to [" + state +
+                                 "] ({0:.1f} miles away)".format(distance))
 
     if debug_p:
         print("base_angle [" + str(base_angle) + "] theta [" + str(theta) +
@@ -476,7 +477,6 @@ def do_something(logf, configf):
     mqttc.loop_start()
 
     while True:
-        print("running update_all_hands")
         update_all_hands(m_clockdata)
         time.sleep(1)
 
