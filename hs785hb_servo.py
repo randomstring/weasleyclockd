@@ -36,7 +36,7 @@ def main(argv):
     for opt, arg in opts:
         if opt == '-h':
             print('test_servohat.py -s <servo> -a <angle> -m <min_pw> -M <max_pw> -r <actuator_range>')
-            print('  -s <servos>  comma seperated servo list of id numbers (0-15) on the servo hat')
+            print('  -s <servos>  comma separated servo list of id numbers (0-15) on the servo hat')
             print('  -a <angle>   angle to drive servo to')
             print('  -m <min_pw>  minimum pulse width in microseconds (default ', pw_min, ')')
             print('  -M <max_pw>  minimum pulse width in microseconds (default ', pw_max, ')')
@@ -57,7 +57,7 @@ def main(argv):
     print('Angle: ', angle)
 
     for servo in servos:
-        print('servo: ', servo, ' to agle: ', angle,
+        print('servo: ', servo, ' to angle: ', angle,
               ' range: ', actuation_range)
         kit.servo[servo].actuation_range = actuation_range
         kit.servo[servo].set_pulse_width_range(pw_min, pw_max)
