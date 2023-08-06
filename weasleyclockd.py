@@ -344,9 +344,19 @@ def move_clock_hand(userstate, clockdata):
         print("servo angle: ", servo_angle)
 
 
+def string2float(str)
+    '''
+    Convert a string to a float. Detect "None" string.
+    '''
+    # TODO: this could do better error handling and even catch the exception
+    if str == 'None'
+        return 0.0
+    return float(str)
+
+
 def update_clock_state(name, message, clockdata):
     '''
-    Parse message data and set the person's clock hand state. Postion is updated seprately.
+    Parse message data and set the person's clock hand state. Position is updated separately.
     '''
     config_data = clockdata['config_data']
     state = None
@@ -356,13 +366,13 @@ def update_clock_state(name, message, clockdata):
     if 'state' in message:
         state = message['state']
     if 'latitude' in message:
-        latitude = float(message['latitude'])
+        latitude = string2float(message['latitude'])
     if 'longitude' in message:
-        longitude = float(message['longitude'])
+        longitude = string2float(message['longitude'])
     if 'distance' in message:
-        distance = float(message['distance'])
+        distance = string2float(message['distance'])
 
-    # distance overides lat/lon
+    # distance overrides lat/lon
     if distance == 0.0 and latitude and longitude:
         latitude_home = float(config_data['latitude'])
         longitude_home = float(config_data['longitude'])
