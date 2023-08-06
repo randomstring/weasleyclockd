@@ -4,7 +4,14 @@
     "python.linting.flake8Enabled": true,
     "python.linting.enabled": true,
     "cSpell.words": [
+        "adafruit",
+        "geopy",
+        "mqtt",
+        "paho",
+        "pulsewidth",
+        "Quidditch",
         "weasleyclock",
-        "weasleyclockd"
+        "weasleyclockd",
+        "Zwift"
     ]
 }

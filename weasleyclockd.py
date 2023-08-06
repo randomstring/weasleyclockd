@@ -169,18 +169,18 @@ def on_connect(client, clockdata, flags, rc):
     client.subscribe(clockdata['topic'])
     client.publish('weasleyclock/UPDATE', payload='{"update":"true"}', qos=0, retain=False)
     if rc != 0:
-        clockdata['logger'].warning("subscibing to topic [" +
+        clockdata['logger'].warning("subscribing to topic [" +
                                     clockdata['topic'] +
                                     "] result code " + str(rc))
     else:
-        clockdata['logger'].debug("subscibing to topic [" +
+        clockdata['logger'].debug("subscribing to topic [" +
                                   clockdata['topic'] +
                                   "] result code " + str(rc))
 
 
 def on_message(client, clockdata, message):
     '''
-    Callback for recieved MQTT messages.
+    Callback for received MQTT messages.
     '''
     # wrap the on_message() processing in a try:
     try:
@@ -191,7 +191,7 @@ def on_message(client, clockdata, message):
 
 def _on_message(client, clockdata, message):
     '''
-    Callback for recieved MQTT messages.
+    Callback for received MQTT messages.
     '''
     topic = message.topic
 
@@ -263,7 +263,7 @@ def hands_in_state(state, config_data):
 
 def update_all_hands(clockdata):
     '''
-    Iterate over all the hands and update the current physical postion to match the current state.
+    Iterate over all the hands and update the current physical position to match the current state.
     '''
     now = time.time()
     delayed_update = False
@@ -291,7 +291,7 @@ def update_all_hands(clockdata):
 
 def move_clock_hand(userstate, clockdata):
     '''
-    Pysically move a single hand given its state.
+    Physically move a single hand given its state.
     '''
     name = userstate['name']
     state = userstate['state']
@@ -539,7 +539,7 @@ def start_daemon(pidf, logf, wdir, configf, nodaemon):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Weasley Clock Deamon")
+    parser = argparse.ArgumentParser(description="Weasley Clock Daemon")
     parser.add_argument('-p', '--pid-file', default='/run/lock/weasleyclockd.pid')
     parser.add_argument('-l', '--log-file', default='/home/pi/weasleyclockd/weasleyclock.log')
     parser.add_argument('-d', '--working-dir', default='/home/pi/weasleyclockd')
