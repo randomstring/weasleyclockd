@@ -253,7 +253,7 @@ def hands_in_state(state, config_data):
     for name in current_state:
         # only count hands that have already been moved.
         # TODO: BUG: the count will be off for hands that haven't moved yet.
-        if current_state[name]['state'] == state:  #< and current_state[name]['hand_moved']:
+        if current_state[name]['state'] == state:  # < and current_state[name]['hand_moved']:
             if name in config_data['hand']:
                 hand = config_data['hand'][name]
                 hands.append(hand)
@@ -266,7 +266,6 @@ def update_all_hands(clockdata):
     Iterate over all the hands and update the current physical position to match the current state.
     '''
     now = time.time()
-    delayed_update = False
     for name in current_state:
         state = current_state[name]['state']
         if state == 'unavailable':
@@ -277,14 +276,13 @@ def update_all_hands(clockdata):
             update_delay = states[state]['update_delay']
         else:
             update_delay = 0
-        if not 'updated' in current_state[name]:
-            print("no updated entry for " + name );
+        if 'updated' not in current_state[name]:
+            print("no updated entry for " + name)
             current_state[name]['updated'] = 0
         if current_state[name]['updated'] + update_delay <= now:
             move_clock_hand(current_state[name], clockdata)
             current_state[name]['hand_moved'] = True
         else:
-            delayed_update = True
             if debug_p:
                 print("delay update of [" + name + "] to state [" + state + "] for " + str(update_delay))
 
@@ -479,7 +477,7 @@ def do_something(logf, configf):
     if port == 4883 or port == 4884 or port == 8883 or port == 8884:
         mqttc.tls_set('/etc/ssl/certs/ca-certificates.crt')
 
-    while(True):
+    while (True):
         try:
             mqttc.connect(host, port, 60)
             break
@@ -511,7 +509,6 @@ def do_something(logf, configf):
 
     mqttc.disconnect()
     mqttc.loop_stop()
-
 
 
 def start_daemon(pidf, logf, wdir, configf, nodaemon):
