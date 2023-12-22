@@ -344,7 +344,7 @@ def move_clock_hand(userstate, clockdata):
         print("servo angle: ", servo_angle)
 
 
-def string2float(str)
+def string2float(str):
     '''
     Convert a string to a float. Detect "None" string.
     '''
