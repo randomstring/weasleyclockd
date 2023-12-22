@@ -349,7 +349,7 @@ def string2float(str):
     Convert a string to a float. Detect "None" string.
     '''
     # TODO: this could do better error handling and even catch the exception
-    if str == 'None'
+    if str == 'None':
         return 0.0
     return float(str)
 
