@@ -119,7 +119,7 @@ def log_distance(distance):
 
     This provides much more resolution near home. Small changes of
     distances near home can be seen, while small and medium changes of
-    distance when far from home are roughly idenital.
+    distance when far from home are roughly identical.
 
     '''
     mult = 1.7

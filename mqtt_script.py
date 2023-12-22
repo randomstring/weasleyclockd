@@ -126,7 +126,7 @@ def send_mqtt_messages(client, userdata):
                     send_message(client, topic, m)
                     time.sleep(wait)
             else:
-                print("Unkown message type [", msg['type'], "]")
+                print("Unknown message type [", msg['type'], "]")
         else:
             send_message(client, topic, msg['msg'])
 
