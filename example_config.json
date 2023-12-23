@@ -1,16 +1,15 @@
 {
-    "mqtt_host": "ha.dole.nu",
-    "mqtt_port": 8883,
+    "mqtt_host": "mqtt.example.com",
+    "mqtt_port": 1883,
     "mqtt_topic": "weasleyclock/#",
     "mqtt_user": "weasleyclock",
-    "mqtt_password": "uFDm4XJuYzBDtnDQLi",
+    "mqtt_password": "PASSWORD",
     
     "hand": {
-	"susan":  "0",
-	"alex":   "1",
-	"evelyn": "2",
-	"ev":     "2",
-	"bryn":   "3"
+	"ron":    "0",
+	"ginny":  "1",
+	"arthur": "2",
+	"molly":  "3"
     },
 
     "channel": {
@@ -20,12 +19,8 @@
 	"3": 6
     },
     
-    "latitude": "47.838078",
-    "longitude": "-122.092798",
-
-    "pulsewidth_min": 685,
-    "pulsewidth_max": 2070,
-    "actuation_range": 2160,
+    "latitude": "-11.613306",
+    "longitude": "166.969389",
 
     "channel_config": {
 	"0": {
