@@ -268,9 +268,10 @@ def update_all_hands(clockdata):
     now = time.time()
     for name in current_state:
         state = current_state[name]['state']
-        if state == 'unavailable':
+        if state == 'unavailable' or state == 'unknown':
             if debug_p:
-                print("State for [" + name + "] is unavailable")
+                print("State for [" + name + "] is " + state)
+            state = "lost"
             continue
         if 'update_delay' in states[state]:
             update_delay = states[state]['update_delay']
