@@ -42,7 +42,7 @@ states = {
         'name': 'Mortal Peril',
         'angle': 270,
         'theta': 50,
-        'offset_style': 'distance'
+        'offset_style': 'staggered'
         },
     'quidditch': {
         'name': 'Quidditch',
