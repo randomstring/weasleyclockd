@@ -99,17 +99,18 @@ def log_distance(distance):
 
     This formula creates a log scale of distance in the range [0.0,1.0]
        0.0  ->  0.00
-       0.5  ->  0.07
-       1.0  ->  0.12
-       2.0  ->  0.18
-       5.0  ->  0.28
-      10.0  ->  0.36
-      15.0  ->  0.41
-      25.0  ->  0.47
-      50.0  ->  0.56
-     100.0  ->  0.65
-     500.0  ->  0.85
-    2500.0  ->  1.00  max distance that can be differentiated
+       0.5  ->  
+       1.0  ->  0.15
+       2.0  ->  0.22
+       5.0  ->  0.35
+      10.0  ->  0.45
+      15.0  ->  0.51
+      25.0  ->  0.59
+      50.0  ->  0.70
+     100.0  ->  0.82
+     200.0  ->  0.92
+     500.0  ->  1.0 max distance that can be differentiated
+    2500.0  ->  1.00  
     6000.0  ->  1.00
     9000.0  ->  1.00
 
@@ -123,7 +124,7 @@ def log_distance(distance):
 
     '''
     mult = 1.7
-    max_dist = 2500
+    max_dist = 500
     scale = (np.log(mult * distance + 1.1) - np.log(1.1))/np.log(max_dist)
     if scale < 0.0:
         scale = 0.0
